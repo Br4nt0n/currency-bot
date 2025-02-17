@@ -7,11 +7,14 @@ use App\Application\Handlers\ShutdownHandler;
 use App\Application\ResponseEmitter\ResponseEmitter;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
+use FreeCurrencyApi\FreeCurrencyApi\FreeCurrencyApiClient;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . './..');
+$dotenv->load();
 
 // Instantiate PHP-DI ContainerBuilder
 $containerBuilder = new ContainerBuilder();
@@ -39,6 +42,18 @@ $container = $containerBuilder->build();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 $callableResolver = $app->getCallableResolver();
+
+$container->set(Redis::class, function () {
+    return new Redis([
+       'host' => getenv('REDIS_HOST'),
+       'port' => (int)getenv('REDIS_PORT'),
+       'auth' => getenv('REDIS_PASSWORD'),
+    ]);
+});
+
+$container->set(FreeCurrencyApiClient::class, function () {
+    return new FreeCurrencyApiClient(getenv('FREE_CURRENCY_API_KEY'));
+});
 
 // Register middleware
 $middleware = require __DIR__ . '/../app/middleware.php';
@@ -81,3 +96,5 @@ $errorMiddleware->setDefaultErrorHandler($errorHandler);
 $response = $app->handle($request);
 $responseEmitter = new ResponseEmitter();
 $responseEmitter->emit($response);
+
+
