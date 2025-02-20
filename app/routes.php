@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Application\Actions\Conversion\ConversionAction;
 use App\Application\Actions\Currency\DollarBlueAction;
+use App\Application\Actions\Currency\DollarRateAction;
+use App\Application\Actions\Currency\RubleRateAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -17,11 +20,19 @@ return function (App $app) {
     });
 
     $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('Hello world!');
+        $body = '<button><a href="/get-dollar-blue">Get Dollar Blue</a></button>
+                <button><a href="/get-dollar-rates">Get Dollar</a></button>
+                <button><a href="/get-ruble-rates">Get Rubble Rate</a></button>
+                <button><a href="/conversion">Conversion</a></button>';
+        $response->getBody()->write($body);
         return $response;
     });
 
-    $app->get('/get-dollar', DollarBlueAction::class);
+    $app->get('/get-dollar-blue', DollarBlueAction::class);
+    $app->get('/get-dollar-rates', DollarRateAction::class);
+    $app->get('/get-ruble-rates', RubleRateAction::class);
+
+    $app->get('/conversion', ConversionAction::class);
 
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);

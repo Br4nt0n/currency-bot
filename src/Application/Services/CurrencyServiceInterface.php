@@ -8,7 +8,11 @@ interface CurrencyServiceInterface
 {
     public function getDollarBlueRate(): int;
 
-    public function getRubbleRate(): int;
+    public function getUsdRubRate(): ?float;
 
-    public function getPesoRate(): int;
+    public function getUsdArsRate(): ?float;
+
+    public function getRubArsRate(): ?float;
+
+    public function getRubUsdRate(): ?float;
 }

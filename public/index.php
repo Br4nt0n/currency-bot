@@ -5,9 +5,13 @@ declare(strict_types=1);
 use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
 use App\Application\ResponseEmitter\ResponseEmitter;
+use App\Application\Services\ConversionInterface;
+use App\Application\Services\ConversionService;
+use App\Application\Services\CurrencyService;
+use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
-use FreeCurrencyApi\FreeCurrencyApi\FreeCurrencyApiClient;
+use GuzzleHttp\Client;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
 
@@ -51,8 +55,17 @@ $container->set(Redis::class, function () {
     ]);
 });
 
-$container->set(FreeCurrencyApiClient::class, function () {
-    return new FreeCurrencyApiClient(getenv('FREE_CURRENCY_API_KEY'));
+$container->set(CurrencyServiceInterface::class, function () {
+    return new CurrencyService(
+        new Client(),
+    );
+});
+
+$container->set(ConversionInterface::class, function () use ($container) {
+    return new ConversionService(
+        $container->get(Redis::class),
+        $container->get(CurrencyServiceInterface::class),
+    );
 });
 
 // Register middleware
