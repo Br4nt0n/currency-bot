@@ -6,6 +6,7 @@ namespace App\Application\Services;
 
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdDto;
+use App\Application\Exceptions\CurrencyException;
 use App\Application\Repositories\BlueLyticsRepository;
 use App\Application\Repositories\ExchangeRateRepository;
 use Redis;
@@ -22,40 +23,30 @@ final class CurrencyService implements CurrencyServiceInterface
     {
     }
 
-    public function getRubUsdRate(): ?float
+    public function getRubRates(): RubDto
     {
-        $dto = $this->getRubCurrentRate();
-
-        if ($dto->rubUsd !== null) {
-            $this->redis->set(self::RUB_USD, $dto->rubUsd, self::TTL);
-
-            return $dto->rubUsd;
+        $rubDto = $this->exchangeRateRepository->getRubRate();
+        if ($rubDto->rubUsd === null || $rubDto->rubArs === null) {
+            throw new CurrencyException("Rub rates not found!");
         }
 
-        throw new \Exception();
+        $this->redis->set(self::RUB_ARS, $rubDto->rubArs, self::TTL);
+        $this->redis->set(self::RUB_USD, $rubDto->rubUsd, self::TTL);
+
+        return $rubDto;
     }
 
-    public function getRubArsRate(): ?float
+    public function getUsdRates(): UsdDto
     {
-        $dto = $this->getRubCurrentRate();
-
-        if ($dto->rubArs !== null) {
-            $this->redis->set(self::RUB_ARS, $dto->rubArs, self::TTL);
-
-            return $dto->rubArs;
+        $usdDto = $this->exchangeRateRepository->getUsdRate();
+        if ($usdDto->usdRub === null || $usdDto->usdArs === null) {
+            throw new CurrencyException("Usd rates not found!");
         }
 
-        throw new \Exception();
-    }
+        $this->redis->set(self::USD_ARS, $usdDto->usdArs, self::TTL);
+        $this->redis->set(self::USD_RUB, $usdDto->usdRub, self::TTL);
 
-    public function getUsdRubRate(): ?float
-    {
-
-    }
-
-    public function getUsdArsRate(): ?float
-    {
-
+        return $usdDto;
     }
 
     public function getDollarBlueRate(): float
@@ -63,22 +54,11 @@ final class CurrencyService implements CurrencyServiceInterface
        $blue = $this->blueLyticsRepository->getDollarBlueAvgRate();
 
        if ($blue !== null) {
-           $this->redis->set(self::DOLLAR_BLUE, $blue);
+           $this->redis->set(self::DOLLAR_BLUE, $blue, self::TTL);
 
            return $blue;
        }
 
-       throw new \Exception("Blue average doesnt exists");
+       throw new CurrencyException("Blue val_average doesnt exists");
     }
-
-    private function getUsdCurrentRate(): UsdDto
-    {
-        return $this->exchangeRateRepository->getUsdRate();
-    }
-
-    private function getRubCurrentRate(): RubDto
-    {
-        return $this->exchangeRateRepository->getRubRate();
-    }
-
 }
