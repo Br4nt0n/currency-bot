@@ -28,6 +28,7 @@ class DollarBlueAction extends Action
         if ($cacheValue !== false) {
            return $this->respondWithData((int)$cacheValue, 203);
         }
+
         $result = $this->service->getDollarBlueRate();
 
         $this->redis->set(self::DOLLAR_BLUE, (string)$result, self::TTL);

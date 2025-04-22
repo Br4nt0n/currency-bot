@@ -6,7 +6,13 @@ namespace App\Application\Services;
 
 interface CurrencyServiceInterface
 {
-    public function getDollarBlueRate(): int;
+    public const string DOLLAR_BLUE = 'dollar_blue';
+
+    public const string RUB_ARS = 'rub_ars';
+
+    public const string RUB_USD = 'rub_usd';
+
+    public function getDollarBlueRate(): ?float;
 
     public function getUsdRubRate(): ?float;
 

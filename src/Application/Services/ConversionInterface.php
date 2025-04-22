@@ -6,11 +6,15 @@ namespace App\Application\Services;
 
 interface ConversionInterface
 {
-    public const DOLLAR_BLUE = 'dollar_blue';
+    public const string DOLLAR_BLUE = 'dollar_blue';
 
-    public const RUB_ARS = 'rub_ars';
+    public const string RUB_ARS = 'rub_ars';
 
-    public const RUB_USD = 'rub_usd';
+    public const string RUB_USD = 'rub_usd';
+
+    public const string USD_RUB = 'usd_rub';
+
+    public const string USD_ARS = 'usd_ars';
 
     public function pesoConversion(float $amount): array;
 

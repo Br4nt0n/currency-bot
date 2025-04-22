@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Application\Clients\BlueLyticsClient;
+use App\Application\Clients\ExchangeRateClient;
 use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
+use App\Application\Repositories\BlueLyticsRepository;
+use App\Application\Repositories\ExchangeRateRepository;
 use App\Application\ResponseEmitter\ResponseEmitter;
 use App\Application\Services\ConversionInterface;
 use App\Application\Services\ConversionService;
@@ -55,9 +59,26 @@ $container->set(Redis::class, function () {
     ]);
 });
 
-$container->set(CurrencyServiceInterface::class, function () {
-    return new CurrencyService(
+$container->set(ExchangeRateClient::class, function () {
+    return new ExchangeRateClient(
         new Client(),
+        getenv('EXCHANGE_URL'),
+        getenv('FREE_CURRENCY_API_KEY'),
+    );
+});
+
+$container->set(BlueLyticsClient::class, function () {
+    return new BlueLyticsClient(
+        new Client(),
+        getenv('DOLLAR_BLUE_URI'),
+    );
+});
+
+$container->set(CurrencyServiceInterface::class, function () use ($container) {
+    return new CurrencyService(
+        $container->get(ExchangeRateRepository::class),
+        $container->get(BlueLyticsRepository::class),
+        $container->get(Redis::class),
     );
 });
 
