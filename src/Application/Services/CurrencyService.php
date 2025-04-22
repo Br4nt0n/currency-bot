@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Services;
 
 use App\Application\Dto\RubDto;
+use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
 use App\Application\Exceptions\CurrencyException;
 use App\Application\Repositories\BlueLyticsRepository;
@@ -49,16 +50,17 @@ final class CurrencyService implements CurrencyServiceInterface
         return $usdDto;
     }
 
-    public function getDollarBlueRate(): float
+    public function getDollarBlueRate(): UsdBlueDto
     {
-       $blue = $this->blueLyticsRepository->getDollarBlueAvgRate();
+       $blueDto = $this->blueLyticsRepository->getDollarBlueRates();
 
-       if ($blue !== null) {
-           $this->redis->set(self::DOLLAR_BLUE, $blue, self::TTL);
+       if ($blueDto->buy !== null && $blueDto->sell !== null) {
+           $this->redis->set(self::DOLLAR_BLUE_BUY, $blueDto->buy, self::TTL);
+           $this->redis->set(self::DOLLAR_BLUE_SELL, $blueDto->sell, self::TTL);
 
-           return $blue;
+           return $blueDto;
        }
 
-       throw new CurrencyException("Blue val_average doesnt exists");
+       throw new CurrencyException("Blue values dont exist");
     }
 }

@@ -28,7 +28,7 @@ class ConversionAction extends Action
             return $this->respondWithData('Invalid currency', StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY);
         }
 
-        $amount = $fields['amount'] ?? null;
+        $amount = (float)$fields['amount'];
 
         if ($amount <= 0) {
             return $this->respondWithData('Invalid amount', StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY);
@@ -42,6 +42,7 @@ class ConversionAction extends Action
             };
         } catch (Throwable $exception) {
             $this->logger->error($exception->getMessage());
+
             return $this->respondWithData('Something went wrong. Try again later.');
         }
 

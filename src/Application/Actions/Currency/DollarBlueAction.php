@@ -12,28 +12,27 @@ use Redis;
 
 class DollarBlueAction extends Action
 {
-    private const TTL = 3600 * 24;
-
-    private const DOLLAR_BLUE = 'dollar_blue';
-
-    public function __construct(LoggerInterface $logger, private readonly CurrencyServiceInterface $service, private readonly Redis $redis)
+    public function __construct(
+        LoggerInterface $logger,
+        private readonly CurrencyServiceInterface $service,
+        private readonly Redis $redis
+    )
     {
         parent::__construct($logger);
     }
 
     protected function action(): Response
     {
-        $cacheValue = $this->redis->get(self::DOLLAR_BLUE);
+        $cacheBuyValue = $this->redis->get(CurrencyServiceInterface::DOLLAR_BLUE_BUY);
+        $cacheSellValue = $this->redis->get(CurrencyServiceInterface::DOLLAR_BLUE_SELL);
 
-        if ($cacheValue !== false) {
-           return $this->respondWithData((int)$cacheValue, 203);
+        if ($cacheBuyValue !== false && $cacheSellValue !== false) {
+           return $this->respondWithData(['buy' => $cacheBuyValue, 'sell' => $cacheSellValue], 203);
         }
 
-        $result = $this->service->getDollarBlueRate();
+        $blueDto = $this->service->getDollarBlueRate();
 
-        $this->redis->set(self::DOLLAR_BLUE, (string)$result, self::TTL);
-
-        return $this->respondWithData($result);
+        return $this->respondWithData(['buy' => $blueDto->buy, 'sell' => $blueDto->sell]);
     }
 
 }

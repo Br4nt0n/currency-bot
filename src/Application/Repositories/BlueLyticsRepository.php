@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Repositories;
 
 use App\Application\Clients\BlueLyticsClient;
+use App\Application\Dto\UsdBlueDto;
 
 class BlueLyticsRepository
 {
@@ -12,10 +13,13 @@ class BlueLyticsRepository
     {
     }
 
-    public function getDollarBlueAvgRate(): ?float
+    public function getDollarBlueRates(): UsdBlueDto
     {
         $result = $this->client->getDollarBlueRate();
 
-        return $result['value_avg'] ?? null;
+        return new UsdBlueDto(
+            buy: $result['value_buy'] ?? null,
+            sell: $result['value_sell'] ?? null,
+        );
     }
 }

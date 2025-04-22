@@ -28,7 +28,7 @@ class RubleRateAction extends Action
         $usdCacheValue = $this->redis->get(CurrencyServiceInterface::RUB_USD);
 
         if ($arsCacheValue !== false && $usdCacheValue !== false) {
-            return $this->respondWithData(['ARS' => $arsCacheValue, 'RUB' => $usdCacheValue], StatusCodeInterface::STATUS_ACCEPTED);
+            return $this->respondWithData(['ARS' => $arsCacheValue, 'USD' => $usdCacheValue], StatusCodeInterface::STATUS_ACCEPTED);
         }
 
         $rubRates = $this->service->getRubRates();
