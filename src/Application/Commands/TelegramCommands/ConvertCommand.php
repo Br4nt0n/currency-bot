@@ -13,15 +13,9 @@ class ConvertCommand extends Command
     protected string $name = 'convert';
     protected string $description = 'Convert command';
 
-    public function __construct(private LoggerInterface $logger)
-    {
-    }
-
     public function handle()
     {
         $chatID = $this->getUpdate()->getChat()->get('id');
-
-        $this->logger->info(print_r($chatID, true));
 
         $replyMarkup = Keyboard::make()
             ->setResizeKeyboard(true)

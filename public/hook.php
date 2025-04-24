@@ -22,8 +22,6 @@ try {
 //    ConvertStepHandler::handle($telegram, $update);
 } catch (Throwable $e) {
     // Silence is golden!
-    $logger = new Logger('error');
-    $logger->pushHandler(new RotatingFileHandler('error.log'));
-    $logger->error($e->getMessage());
+    file_put_contents('error.log', $e->getMessage());
      echo $e->getMessage();
 }
