@@ -19,12 +19,14 @@ RUN apt-get update && apt-get install -y \
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install --no-scripts --no-autoloader --no-interaction --no-dev
 
 # Конфиги
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Копируем код
 COPY . /var/www/html
+RUN cp .env.example .env
 
 WORKDIR /var/www/html
 
