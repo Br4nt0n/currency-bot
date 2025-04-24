@@ -12,11 +12,8 @@ use Telegram\Bot\Objects\Update;
 
 class ConvertStepHandler
 {
-    public static function handle(Api $telegram, Update $update): bool
+    public static function handle(Api $telegram, Update $update, Redis $redis): bool
     {
-        $container = new Container();
-        $redis = $container->get(Redis::class);
-
         $message = $update->getMessage();
         $chatId = $update->getChat()->get('id');
         $text = $message->get('text');

@@ -30,7 +30,7 @@ class BotWebhook extends Action
             $telegram->commandsHandler(true);
             $update = $telegram->getWebhookUpdate();
             // Обработка шагов после команды
-            ConvertStepHandler::handle($telegram, $update);
+            ConvertStepHandler::handle($telegram, $update, $this->redis);
 
             //    $update->callbackQuery->get('data');
         } catch (Throwable $e) {
