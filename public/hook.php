@@ -19,7 +19,7 @@ try {
     $telegram->commandsHandler(true);
     $update = $telegram->getWebhookUpdate();
     // Обработка шагов после команды
-//    ConvertStepHandler::handle($telegram, $update);
+    ConvertStepHandler::handle($telegram, $update);
 } catch (Throwable $e) {
     // Silence is golden!
     file_put_contents('error.log', $e->getMessage());
