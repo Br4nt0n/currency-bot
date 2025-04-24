@@ -33,6 +33,7 @@ class ConvertStepHandler
             if (is_numeric($text) && $text > 0) {
                 $amount = floatval($text);
                 $currency = $redis->get('chat_' . $chatId);
+                $redis->del('chat_' . $chatId);
 
                 $telegram->sendMessage([
                     'chat_id' => $chatId,
