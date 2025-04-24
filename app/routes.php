@@ -7,6 +7,7 @@ use App\Application\Actions\Currency\DollarBlueAction;
 use App\Application\Actions\Currency\DollarRateAction;
 use App\Application\Actions\Currency\RubleRateAction;
 use App\Application\Actions\Telegram\BotAction;
+use App\Application\Actions\Telegram\BotWebhook;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -37,6 +38,7 @@ return function (App $app) {
     $app->get('/conversion', ConversionAction::class);
 
     $app->get('/bot', BotAction::class);
+    $app->map(['GET', 'POST'], '/telegram/webhook', BotWebhook::class);
 
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);

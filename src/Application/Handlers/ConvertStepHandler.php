@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Handlers;
 
 use App\Application\Enums\CurrencyCodeEnum;
+use DI\Container;
+use Redis;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 
@@ -17,6 +19,9 @@ class ConvertStepHandler
         $text = $message->get('text');
 
         if (in_array($text, CurrencyCodeEnum::values())) {
+            $container = new Container();
+            $redis = $container->get(Redis::class);
+
             $telegram->sendMessage([
                 'chat_id' => $chatId,
                 'text' => "Вы выбрали: $text Введите требуемую сумму",
