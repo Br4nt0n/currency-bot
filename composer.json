@@ -26,6 +26,7 @@
         "ext-json": "*",
         "ext-redis": "*",
         "guzzlehttp/guzzle": "^7.0",
+        "longman/telegram-bot": "v1.x-dev",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^6.4",
         "slim/psr7": "^1.5",
@@ -43,6 +44,7 @@
     "minimum-stability": "dev",
     "config": {
         "allow-plugins": {
+            "php-http/discovery": true,
             "phpstan/extension-installer": true
         },
         "process-timeout": 0,
