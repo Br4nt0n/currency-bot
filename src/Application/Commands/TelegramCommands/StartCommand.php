@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Longman\TelegramBot\Commands\UserCommands;
+namespace App\Application\Commands\TelegramCommands;
 
-use Redis;
 use Telegram\Bot\Commands\Command;
 
 class StartCommand extends Command
