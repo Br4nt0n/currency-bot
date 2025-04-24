@@ -38,7 +38,7 @@ class BotWebhook extends Action
             echo $e->getMessage();
         }
 
-        return $this->response;
+        return $this->respondWithData(['OK']);
     }
 
 }

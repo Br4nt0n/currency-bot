@@ -30,7 +30,7 @@ class ConvertStepHandler
             return true;
         }
 
-        if (is_numeric($text)) {
+        if (is_numeric($text) && $text > 0) {
             $amount = floatval($text);
             $telegram->sendMessage([
                 'chat_id' => $chatId,
@@ -38,6 +38,11 @@ class ConvertStepHandler
             ]);
 
             return true;
+        } else {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => "Введите корректную сумму",
+            ]);
         }
 
         return false;

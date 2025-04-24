@@ -93,7 +93,7 @@ $container->set(ConversionInterface::class, function () use ($container) {
 $container->set(Api::class, function () {
     $telegram = new Api(getenv('BOT_API_KEY'));
     $telegram->setWebhook([
-        'url' => getenv('APP_NAME') . 'hook.php',
+        'url' => getenv('APP_NAME') . '/telegram/webhook',
     ]);
 
     return $telegram;
