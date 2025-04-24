@@ -5,8 +5,6 @@ declare(strict_types=1);
 use App\Application\Commands\TelegramCommands\ConvertCommand;
 use App\Application\Commands\TelegramCommands\StartCommand;
 use App\Application\Handlers\ConvertStepHandler;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Logger;
 use Telegram\Bot\Api;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -20,6 +18,8 @@ try {
     $update = $telegram->getWebhookUpdate();
     // Обработка шагов после команды
     ConvertStepHandler::handle($telegram, $update);
+
+//    $update->callbackQuery->get('data');
 } catch (Throwable $e) {
     // Silence is golden!
     file_put_contents('error.log', $e->getMessage());
