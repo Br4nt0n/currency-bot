@@ -9,23 +9,22 @@ use PhpTelegramBot\Core\Exceptions\TelegramException;
 use PhpTelegramBot\Core\Telegram;
 use Psr\Http\Message\ResponseInterface as Response;
 
+use Telegram\Bot\Api;
+
 class BotAction extends Action
 {
     protected function action(): Response
     {
 
         try {
-            // Create Telegram API object
-            $telegram = new Telegram(getenv('BOT_API_KEY'), getenv('BOT_NAME'));
-
-            // Set webhook
-            $result = $telegram->setWebhook([
+            $telegram = new Api(getenv('BOT_API_KEY'));
+            $telegram->setWebhook([
                 'url' => getenv('APP_NAME') . 'hook.php',
             ]);
-            if ($result) {
-                echo "OK";
-            }
-        } catch (TelegramException $e) {
+
+            // Example usage
+            var_dump($telegram->getWebhookInfo());
+        } catch (\Throwable $e) {
             // log telegram errors
             echo $e->getMessage();
         }
