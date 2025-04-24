@@ -2,22 +2,19 @@
 
 declare(strict_types=1);
 
-use PhpTelegramBot\Core\Exceptions\TelegramException;
-use PhpTelegramBot\Core\Telegram;
+use Longman\TelegramBot\Commands\UserCommands\StartCommand;
+use Telegram\Bot\Api;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 
 try {
-    // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram(getenv('BOT_API_KEY'), getenv('BOT_NAME'));
+    $telegram = new Api(getenv('BOT_API_KEY'));
 
-    // Handle telegram webhook request
-    var_dump($telegram->getWebhookInfo());
-
-
-    $telegram->handle();
-} catch (TelegramException $e) {
+    $telegram->addCommand(StartCommand::class);
+    $update = $telegram->commandsHandler(true);
+    var_dump($update);
+} catch (Throwable $e) {
     // Silence is golden!
     // log telegram errors
      echo $e->getMessage();

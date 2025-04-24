@@ -18,12 +18,12 @@ class BotAction extends Action
 
         try {
             $telegram = new Api(getenv('BOT_API_KEY'));
-            $telegram->setWebhook([
+            $result = $telegram->setWebhook([
                 'url' => getenv('APP_NAME') . 'hook.php',
             ]);
 
             // Example usage
-            var_dump($telegram->getWebhookInfo());
+            var_dump($result, $telegram->getWebhookInfo());
         } catch (\Throwable $e) {
             // log telegram errors
             echo $e->getMessage();
