@@ -16,6 +16,24 @@ class BotAction extends Action
     {
         echo getenv('BOT_API_KEY') . PHP_EOL . getenv('BOT_NAME') . PHP_EOL . getenv('FREE_CURRENCY_API_KEY');
 
+        echo PHP_EOL . getenv('REDIS_HOST') . PHP_EOL . getenv('REDIS_PORT');
+
+        try {
+            // Create Telegram API object
+            $telegram = new Telegram(getenv('BOT_API_KEY'), getenv('BOT_NAME'));
+
+            // Set webhook
+            $result = $telegram->setWebhook([
+                'url' => getenv('APP_NAME') . 'hook.php',
+            ]);
+            if ($result) {
+                echo "OK";
+            }
+        } catch (TelegramException $e) {
+            // log telegram errors
+            echo $e->getMessage();
+        }
+
         return $this->response;
     }
 
