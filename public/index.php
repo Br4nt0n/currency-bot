@@ -18,6 +18,7 @@ use DI\ContainerBuilder;
 use GuzzleHttp\Client;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
+use Telegram\Bot\Api;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -87,6 +88,15 @@ $container->set(ConversionInterface::class, function () use ($container) {
         $container->get(Redis::class),
         $container->get(CurrencyServiceInterface::class),
     );
+});
+
+$container->set(Api::class, function () {
+    $telegram = new Api(getenv('BOT_API_KEY'));
+    $telegram->setWebhook([
+        'url' => getenv('APP_NAME') . 'hook.php',
+    ]);
+
+    return $telegram;
 });
 
 // Register middleware

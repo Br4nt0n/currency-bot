@@ -22,13 +22,13 @@ class StartCommand extends Command
             ->setResizeKeyboard(true)
             ->setOneTimeKeyboard(true)
             ->row([
-                Keyboard::button('Конвертировать валюту (рубли, доллары, песо)'),
-                Keyboard::button('Узнать текущий курс интересующей валюты'),
-                Keyboard::button('Посмотреть график интересующей валюты за последнее время'),
+                Keyboard::inlineButton(['text' =>'Конвертировать', 'url' => 'tg://convert']),
+                Keyboard::button('Узнать текущий курс'),
+                Keyboard::button('Посмотреть график за последнее время'),
             ]);
 
         $this->replyWithMessage([
-            'text' => 'У нас тут доступны такие опции: ',
+            'text' => 'Доступные валюты: песо (ARS), доллар (USD), рубль (RUB). Можно: ',
             'reply_markup' => $replyMarkup
         ]);
     }
