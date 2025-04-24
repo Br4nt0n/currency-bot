@@ -19,10 +19,15 @@ RUN apt-get update && apt-get install -y \
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-scripts --no-autoloader --no-interaction --no-dev
 
 # Конфиги
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Копируем только файлы зависимостей — для кэширования слоёв
+COPY composer.json composer.lock /var/www/html/
+
+# Устанавливаем зависимости
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Копируем код
 COPY . /var/www/html
