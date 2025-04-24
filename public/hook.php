@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Application\Commands\TelegramCommands\ConvertCommand;
 use App\Application\Commands\TelegramCommands\StartCommand;
 use App\Application\Handlers\ConvertStepHandler;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
 use Telegram\Bot\Api;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -20,6 +22,8 @@ try {
 //    ConvertStepHandler::handle($telegram, $update);
 } catch (Throwable $e) {
     // Silence is golden!
-    // log telegram errors
+    $logger = new Logger('error');
+    $logger->pushHandler(new RotatingFileHandler('error.log'));
+    $logger->error($e->getMessage());
      echo $e->getMessage();
 }

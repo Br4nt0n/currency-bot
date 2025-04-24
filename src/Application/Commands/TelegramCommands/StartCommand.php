@@ -22,7 +22,7 @@ class StartCommand extends Command
             ->setResizeKeyboard(true)
             ->setOneTimeKeyboard(true)
             ->row([
-                Keyboard::inlineButton(['text' =>'Конвертировать', 'callback_data' => 'convert']),
+                Keyboard::button('Узнать текущий курс'),
                 Keyboard::button('Узнать текущий курс'),
                 Keyboard::button('Посмотреть график за последнее время'),
             ]);
