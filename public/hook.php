@@ -14,11 +14,10 @@ try {
     $telegram = new Api(getenv('BOT_API_KEY'));
 
     $telegram->addCommands([StartCommand::class, ConvertCommand::class]);
-    $update = $telegram->getWebhookUpdate();
     $telegram->commandsHandler(true);
-
+    $update = $telegram->getWebhookUpdate();
     // Обработка шагов после команды
-    ConvertStepHandler::handle($telegram, $update);
+//    ConvertStepHandler::handle($telegram, $update);
 } catch (Throwable $e) {
     // Silence is golden!
     // log telegram errors
