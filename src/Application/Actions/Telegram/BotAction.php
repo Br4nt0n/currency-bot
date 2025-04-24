@@ -11,12 +11,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 class BotAction extends Action
 {
-
     protected function action(): Response
     {
-        echo getenv('BOT_API_KEY') . PHP_EOL . getenv('BOT_NAME') . PHP_EOL . getenv('FREE_CURRENCY_API_KEY');
-
-        echo PHP_EOL . getenv('REDIS_HOST') . PHP_EOL . getenv('REDIS_PORT');
 
         try {
             // Create Telegram API object
