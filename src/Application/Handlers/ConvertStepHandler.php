@@ -14,13 +14,15 @@ class ConvertStepHandler
 {
     public static function handle(Api $telegram, Update $update): bool
     {
+        $container = new Container();
+        $redis = $container->get(Redis::class);
+
         $message = $update->getMessage();
         $chatId = $update->getChat()->get('id');
         $text = $message->get('text');
 
         if (in_array($text, CurrencyCodeEnum::values())) {
-            $container = new Container();
-            $redis = $container->get(Redis::class);
+            $redis->set('chat_' . $chatId, $text);
 
             $telegram->sendMessage([
                 'chat_id' => $chatId,
@@ -30,21 +32,30 @@ class ConvertStepHandler
             return true;
         }
 
-        if (is_numeric($text) && $text > 0) {
-            $amount = floatval($text);
-            $telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => "Вы ввели: $amount",
-            ]);
+        if ($redis->get('chat_' . $chatId)) {
+            if (is_numeric($text) && $text > 0) {
+                $amount = floatval($text);
+                $currency = $redis->get('chat_' . $chatId);
 
-            return true;
-        } else {
-            $telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => "Введите корректную сумму",
-            ]);
+                $telegram->sendMessage([
+                    'chat_id' => $chatId,
+                    'text' => "Вы ввели: $amount $currency",
+                ]);
+
+                return true;
+            } else {
+                $telegram->sendMessage([
+                    'chat_id' => $chatId,
+                    'text' => "Введите корректную сумму",
+                ]);
+            }
         }
 
         return false;
+    }
+
+    private function calculateCurrency(float $amount, string $currency): float
+    {
+        return 0.0;
     }
 }
