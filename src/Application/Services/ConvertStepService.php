@@ -18,12 +18,25 @@ final class ConvertStepService
     {
     }
 
-    public function handle(Api $telegram, Update $update)
+    public function handle(Api $telegram, Update $update): bool
     {
         $message = $update->getMessage();
         $chatId = $update->getChat()->get('id');
         $text = $message->get('text');
         $cacheKey = sprintf(self::CHAT_ID, $chatId);
+
+        if ($text === 'Конвертировать') {
+            $callback = $update->callbackQuery;
+            $data = $callback->get('data');
+            $object = $callback->objectType();
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' =>  "$callback * $data * $object"
+            ]);
+
+            return true;
+        }
+
 
         if (in_array($text, CurrencyCodeEnum::values())) {
             $this->redis->set($cacheKey, $text);
@@ -69,13 +82,11 @@ final class ConvertStepService
 
     private function calculateCurrency(float $amount, string $currency): RatesBase
     {
-        $result = match ($currency) {
+        return match ($currency) {
             CurrencyCodeEnum::ARS->value => $this->conversion->pesoConversion($amount),
             CurrencyCodeEnum::USD->value => $this->conversion->dollarConversion($amount),
             CurrencyCodeEnum::RUB->value => $this->conversion->rubleConversion($amount),
         };
-
-        return  $result;
     }
 
 }

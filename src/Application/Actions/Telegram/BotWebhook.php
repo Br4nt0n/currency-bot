@@ -17,7 +17,7 @@ use Throwable;
 
 class BotWebhook extends Action
 {
-    public function __construct(LoggerInterface $logger, private ConvertStepService $stepService)
+    public function __construct(LoggerInterface $logger, private Api $telegram, private ConvertStepService $stepService)
     {
         parent::__construct($logger);
     }
@@ -25,13 +25,12 @@ class BotWebhook extends Action
     protected function action(): Response
     {
         try {
-            $telegram = new Api(getenv('BOT_API_KEY'));
-            $telegram->addCommands([StartCommand::class, ConvertCommand::class]);
-            $telegram->commandsHandler(true);
-            $update = $telegram->getWebhookUpdate();
+            $this->telegram->addCommands([StartCommand::class, ConvertCommand::class]);
+            $this->telegram->commandsHandler(true);
+            $update = $this->telegram->getWebhookUpdate();
             $callback = $update->callbackQuery;
             // Обработка шагов после команды
-            $this->stepService->handle($telegram, $update);
+            $this->stepService->handle($this->telegram, $update);
 
             $this->logger->info(print_r($callback->get('data'), true));
             $this->logger->info(print_r($callback->objectType(), true));

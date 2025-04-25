@@ -16,6 +16,6 @@ class USDRatesDto extends RatesBase
 
     public function toString(): string
     {
-        return "Песо: {$this->ars} Песо Блю курс: {$this->ars_blue} Рубли: {$this->rub}";
+        return "Это составит: Песо: {$this->ars} Песо Блю курс: {$this->ars_blue} Рубли: {$this->rub}";
     }
 }

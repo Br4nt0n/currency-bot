@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
+use App\Application\Dto\ARSRatesDto;
 use App\Application\Dto\RatesBase;
+use App\Application\Dto\RUBRatesDto;
 use App\Application\Dto\USDRatesDto;
 use Redis;
 
@@ -14,14 +16,14 @@ final class ConversionService implements ConversionInterface
     {
     }
 
-    public function pesoConversion(float $amount): array
+    public function pesoConversion(float $amount): RatesBase|ARSRatesDto
     {
         $usdBlue = $this->redis->get(CurrencyServiceInterface::DOLLAR_BLUE_SELL);
         $arsRub = $this->redis->get(CurrencyServiceInterface::RUB_ARS);
         $arsUsd = $this->redis->get(CurrencyServiceInterface::USD_ARS);
 
         if ($usdBlue === false) {
-            $usdBlue = $this->service->getDollarBlueRate()?->sell;
+            $usdBlue = $this->service->getDollarBlueRate()->sell;
         }
 
         if ($arsRub === false) {
@@ -32,12 +34,11 @@ final class ConversionService implements ConversionInterface
             $arsUsd = $this->service->getUsdRates()->usdArs;
         }
 
-        return [
-            'amount' => $amount,
-            'usd_blue' => round($amount / (float)$usdBlue, 2),
-            'usd_official' => round($amount / (float)$arsUsd, 2),
-            'ruble' => round($amount / $arsRub),
-        ];
+        return new ARSRatesDto(
+            rub: round($amount / $arsRub),
+            usd: round($amount / (float)$arsUsd, 2),
+            usd_blue: round($amount / (float)$usdBlue, 2),
+        );
     }
 
     public function dollarConversion(float $amount): RatesBase|USDRatesDto
@@ -63,7 +64,7 @@ final class ConversionService implements ConversionInterface
         );
     }
 
-    public function rubleConversion(float $amount): array
+    public function rubleConversion(float $amount): RatesBase|RUBRatesDto
     {
         $rubArs = $this->redis->get(CurrencyServiceInterface::RUB_ARS);
         $rubUsd = $this->redis->get(CurrencyServiceInterface::RUB_USD);
@@ -74,11 +75,9 @@ final class ConversionService implements ConversionInterface
             $rubUsd = $rubRates->rubUsd;
         }
 
-        return [
-            'amount' => $amount,
-            'usd' => round($amount * $rubUsd, 2),
-            'peso' => round($amount * $rubArs, 2),
-        ];
+        return new RUBRatesDto(
+            ars: round($amount * $rubArs, 2),
+            usd: round($amount * $rubUsd, 2),
+        );
     }
-
 }
