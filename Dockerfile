@@ -1,5 +1,8 @@
 FROM php:8.4-fpm
 
+RUN getent group www-data || groupadd -g 1000 www-data && \
+    id -u www-data || useradd -u 1000 -g www-data -m -s /bin/bash www-data
+
 # Установка зависимостей
 RUN apt-get update && apt-get install -y \
     nginx \
@@ -20,8 +23,6 @@ RUN apt-get update && apt-get install -y \
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Конфиги
-COPY nginx.conf /etc/nginx/nginx.conf
 
 # Копируем только файлы зависимостей — для кэширования слоёв
 COPY composer.json composer.lock /var/www/html/
@@ -49,7 +50,14 @@ RUN cp .env.example .env
 
 WORKDIR /var/www/html
 
+RUN chown -R www-data:www-data /var
+
+# Конфиги
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Открываем порт 8080
 EXPOSE 8080
 
-CMD service nginx start && php-fpm
+USER root
+CMD ["sh", "-c", "service nginx start && php-fpm"]
+
