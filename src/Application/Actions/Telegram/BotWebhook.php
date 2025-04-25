@@ -8,6 +8,7 @@ use App\Application\Actions\Action;
 use App\Application\Commands\TelegramCommands\ConvertCommand;
 use App\Application\Commands\TelegramCommands\StartCommand;
 use App\Application\Handlers\ConvertStepHandler;
+use App\Application\Services\ConvertStepService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -16,7 +17,7 @@ use Throwable;
 
 class BotWebhook extends Action
 {
-    public function __construct(LoggerInterface $logger, private Redis $redis)
+    public function __construct(LoggerInterface $logger, private ConvertStepService $stepService)
     {
         parent::__construct($logger);
     }
@@ -28,10 +29,10 @@ class BotWebhook extends Action
             $telegram->addCommands([StartCommand::class, ConvertCommand::class]);
             $telegram->commandsHandler(true);
             $update = $telegram->getWebhookUpdate();
-            // Обработка шагов после команды
-            ConvertStepHandler::handle($telegram, $update, $this->redis);
-
             $callback = $update->callbackQuery;
+            // Обработка шагов после команды
+            $this->stepService->handle($telegram, $update);
+
             $this->logger->info(print_r($callback->get('data'), true));
             $this->logger->info(print_r($callback->objectType(), true));
         } catch (Throwable $e) {

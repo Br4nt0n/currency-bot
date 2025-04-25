@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
+use App\Application\Dto\RatesBase;
+use App\Application\Dto\USDRatesDto;
 use Redis;
 
 final class ConversionService implements ConversionInterface
@@ -38,7 +40,7 @@ final class ConversionService implements ConversionInterface
         ];
     }
 
-    public function dollarConversion(float $amount): array
+    public function dollarConversion(float $amount): RatesBase|USDRatesDto
     {
         $pesoBlueValue = $this->redis->get(CurrencyServiceInterface::DOLLAR_BLUE_BUY);
         $usdRub = $this->redis->get(CurrencyServiceInterface::USD_RUB);
@@ -54,12 +56,11 @@ final class ConversionService implements ConversionInterface
             $usdArs = $usdRate->usdArs;
         }
 
-        return [
-            'amount' => $amount,
-            'peso' => round($amount * $usdArs, 2),
-            'peso_blue' => round($amount * $pesoBlueValue, 2),
-            'rubble' => round($amount * $usdRub),
-        ];
+        return new USDRatesDto(
+            ars: round($amount * $usdArs, 2),
+            ars_blue: round($amount * $pesoBlueValue, 2),
+            rub: round($amount * $usdRub),
+        );
     }
 
     public function rubleConversion(float $amount): array
