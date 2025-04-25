@@ -6,6 +6,7 @@ namespace App\Application\Services;
 
 use App\Application\Dto\RatesBase;
 use App\Application\Enums\CurrencyCodeEnum;
+use InvalidArgumentException;
 use Redis;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
@@ -24,19 +25,6 @@ final class ConvertStepService
         $chatId = $update->getChat()->get('id');
         $text = $message->get('text');
         $cacheKey = sprintf(self::CHAT_ID, $chatId);
-
-        if ($text === 'Конвертировать') {
-            $callback = $update->callbackQuery;
-            $data = $callback->get('data');
-            $object = $callback->objectType();
-            $telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' =>  "$callback * $data * $object"
-            ]);
-
-            return true;
-        }
-
 
         if (in_array($text, CurrencyCodeEnum::values())) {
             $this->redis->set($cacheKey, $text);
@@ -70,7 +58,7 @@ final class ConvertStepService
             } else {
                 $telegram->sendMessage([
                     'chat_id' => $chatId,
-                    'text' => "Введите корректную сумму " . $this->redis->get($chatId),
+                    'text' => "Введите корректную сумму",
                 ]);
             }
 
@@ -86,6 +74,7 @@ final class ConvertStepService
             CurrencyCodeEnum::ARS->value => $this->conversion->pesoConversion($amount),
             CurrencyCodeEnum::USD->value => $this->conversion->dollarConversion($amount),
             CurrencyCodeEnum::RUB->value => $this->conversion->rubleConversion($amount),
+            default => throw new InvalidArgumentException("This: $currency does`t exists!")
         };
     }
 

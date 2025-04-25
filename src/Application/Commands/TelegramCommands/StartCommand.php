@@ -21,10 +21,11 @@ class StartCommand extends Command
         $replyMarkup = Keyboard::make()
             ->setResizeKeyboard(true)
             ->setOneTimeKeyboard(true)
+            ->inline()
             ->row([
                 Keyboard::inlineButton(['text' =>'Конвертировать', 'callback_data' => 'convert']),
-                Keyboard::button('Узнать текущий курс'),
-                Keyboard::button('Посмотреть график за последнее время'),
+                Keyboard::inlineButton(['text' =>'Узнать текущий курс', 'callback_data' => 'latest']),
+                Keyboard::inlineButton(['text' =>'График валют за последнее время', 'callback_data' => 'chart']),
             ]);
 
         $this->replyWithMessage([
