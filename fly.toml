@@ -20,12 +20,3 @@ primary_region = 'eze'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-
-[processes]
-  # The command below is used to launch a Rails server; be sure to
-  # replace with the command you're using to launch your server.
-  web = "bin/rails fly:server"
-  cron = "supercronic /app/crontab"
-
-[[services]]
-  processes = ["web"]
