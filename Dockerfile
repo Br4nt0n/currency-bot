@@ -59,5 +59,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080
 
 USER root
-CMD ["sh", "-c", "service nginx start && php-fpm"]
+CMD ["sh", "-c", "service nginx start && php-fpm & supercronic /var/www/html/crontab"]
 

@@ -25,14 +25,15 @@ class BotWebhook extends Action
     {
         try {
             $telegram = new Api(getenv('BOT_API_KEY'));
-
             $telegram->addCommands([StartCommand::class, ConvertCommand::class]);
             $telegram->commandsHandler(true);
             $update = $telegram->getWebhookUpdate();
             // Обработка шагов после команды
             ConvertStepHandler::handle($telegram, $update, $this->redis);
 
-            //    $update->callbackQuery->get('data');
+            $callback = $update->callbackQuery;
+            $this->logger->info(print_r($callback->get('data'), true));
+            $this->logger->info(print_r($callback->objectType(), true));
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
             echo $e->getMessage();

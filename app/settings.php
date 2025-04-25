@@ -13,8 +13,8 @@ return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
         SettingsInterface::class => function () {
             return new Settings([
-                'displayErrorDetails' => true, // Should be set to false in production
-                'logError'            => false,
+                'displayErrorDetails' => getenv('APP_ENV')  === 'local',
+                'logError'            => true,
                 'logErrorDetails'     => false,
                 'logger' => [
                     'name' => 'slim-app',
