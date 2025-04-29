@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Application\Clients\BlueLyticsClient;
 use App\Application\Clients\ExchangeRateClient;
+use App\Application\Handlers\ContainerHelper;
 use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
 use App\Application\Repositories\BlueLyticsRepository;
@@ -98,6 +99,8 @@ $container->set(Api::class, function () {
 
     return $telegram;
 });
+
+ContainerHelper::setContainer($container);
 
 // Register middleware
 $middleware = require __DIR__ . '/../app/middleware.php';

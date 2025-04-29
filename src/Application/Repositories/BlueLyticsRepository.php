@@ -6,6 +6,7 @@ namespace App\Application\Repositories;
 
 use App\Application\Clients\BlueLyticsClient;
 use App\Application\Dto\UsdBlueDto;
+use App\Application\Dto\UsdOfficialDto;
 
 class BlueLyticsRepository
 {
@@ -20,6 +21,16 @@ class BlueLyticsRepository
         return new UsdBlueDto(
             buy: $result['value_buy'] ?? null,
             sell: $result['value_sell'] ?? null,
+        );
+    }
+
+    public function getDollarOfficialRates(): UsdOfficialDto
+    {
+        $result = $this->client->getOfficialRate();
+
+        return new UsdOfficialDto(
+          buy: $result['value_buy'] ?? null,
+          sell: $result['value_sell'] ?? null,
         );
     }
 }

@@ -7,6 +7,7 @@ namespace App\Application\Services;
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
+use App\Application\Dto\UsdOfficialDto;
 use App\Application\Exceptions\CurrencyException;
 use App\Application\Repositories\BlueLyticsRepository;
 use App\Application\Repositories\ExchangeRateRepository;
@@ -62,5 +63,19 @@ final class CurrencyService implements CurrencyServiceInterface
        }
 
        throw new CurrencyException("Blue values dont exist");
+    }
+
+    public function getDollarOfficialRate(): UsdOfficialDto
+    {
+       $officialDto = $this->blueLyticsRepository->getDollarOfficialRates();
+
+       if ($officialDto->buy !== null && $officialDto->sell !== null) {
+           $this->redis->set(self::USD_ARS_BUY, $officialDto->buy, self::TTL);
+           $this->redis->set(self::USD_ARS_SELL, $officialDto->sell, self::TTL);
+
+           return $officialDto;
+       }
+
+       throw new CurrencyException("Official values dont exist");
     }
 }

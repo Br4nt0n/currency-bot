@@ -25,4 +25,15 @@ class BlueLyticsClient extends BaseClient
         return $result['blue'];
     }
 
+    public function getOfficialRate(): array
+    {
+        $result = $this->sendRequest($this->uri);
+
+        if (!isset($result['oficial'])) {
+            throw new HttpException('Value `blue` does no exists');
+        }
+
+        return $result['oficial'];
+    }
+
 }

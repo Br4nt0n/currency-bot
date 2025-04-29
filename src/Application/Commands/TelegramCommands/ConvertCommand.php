@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Commands\TelegramCommands;
 
 use App\Application\Enums\CurrencyCodeEnum;
-use Psr\Log\LoggerInterface;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\Keyboard\Keyboard;
 
