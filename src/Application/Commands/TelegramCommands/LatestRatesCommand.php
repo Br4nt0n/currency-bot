@@ -62,14 +62,19 @@ class LatestRatesCommand extends Command
             $usdArs = $usdRate->usdArs;
         }
 
+        $rubArs = $redis->get(CurrencyServiceInterface::RUB_ARS);
+
         return "На $date доллар составляет: 
                 Блю курс:
-                    Покупка: $usdBlueSell
-                    Продажа: $usdBlueBuy
+                    Продажа: $usdBlueSell
+                    Покупка: $usdBlueBuy
                 Официальный (рубли): 
                     Покупка: $usdRub
                 Официальный (песо): 
-                    Продажа: $usdArs
+                    Покупка: $usdArs
+                Рубль составляет: 
+                    Официальный (песо): 
+                        Покупка: $rubArs
         ";
     }
 }

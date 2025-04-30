@@ -34,6 +34,10 @@ class BotWebhook extends Action
             ]);
             $this->telegram->commandsHandler(true);
             $update = $this->telegram->getWebhookUpdate();
+
+            $chatId = $update->getChat()->get('id');
+            $this->logger->info('Request from chat ID: ' . $chatId);
+
             $callback = $update->callbackQuery;
 
             // Обработка шагов после команды

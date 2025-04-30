@@ -7,10 +7,11 @@ namespace App\Application\Clients;
 use Fig\Http\Message\StatusCodeInterface;
 use GuzzleHttp\Client;
 use HttpException;
+use Psr\Log\LoggerInterface;
 
 abstract class BaseClient
 {
-    public function __construct(private readonly Client $client)
+    public function __construct(private readonly LoggerInterface $logger, private readonly Client $client)
     {
     }
 
@@ -19,6 +20,7 @@ abstract class BaseClient
         $result = $this->client->get($uri);
 
         if ($result->getStatusCode() !== StatusCodeInterface::STATUS_OK) {
+            $this->logger->critical($result->getStatusCode() . $result->getReasonPhrase());
             throw new HttpException($result->getStatusCode() . $result->getReasonPhrase());
         }
 

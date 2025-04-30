@@ -17,6 +17,7 @@ use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use GuzzleHttp\Client;
+use Psr\Log\LoggerInterface;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Telegram\Bot\Api;
@@ -61,16 +62,18 @@ $container->set(Redis::class, function () {
     ]);
 });
 
-$container->set(ExchangeRateClient::class, function () {
+$container->set(ExchangeRateClient::class, function () use ($container)  {
     return new ExchangeRateClient(
+        $container->get(LoggerInterface::class),
         new Client(),
         getenv('EXCHANGE_URL'),
         getenv('FREE_CURRENCY_API_KEY'),
     );
 });
 
-$container->set(BlueLyticsClient::class, function () {
+$container->set(BlueLyticsClient::class, function () use ($container)  {
     return new BlueLyticsClient(
+        $container->get(LoggerInterface::class),
         new Client(),
         getenv('DOLLAR_BLUE_URI'),
     );
@@ -99,8 +102,6 @@ $container->set(Api::class, function () {
 
     return $telegram;
 });
-
-ContainerHelper::setContainer($container);
 
 // Register middleware
 $middleware = require __DIR__ . '/../app/middleware.php';
@@ -144,4 +145,4 @@ $response = $app->handle($request);
 $responseEmitter = new ResponseEmitter();
 $responseEmitter->emit($response);
 
-
+ContainerHelper::setContainer($container);

@@ -6,12 +6,13 @@ namespace App\Application\Clients;
 
 use GuzzleHttp\Client;
 use HttpException;
+use Psr\Log\LoggerInterface;
 
 class BlueLyticsClient extends BaseClient
 {
-    public function __construct(Client $client, private readonly string $uri)
+    public function __construct(private LoggerInterface $logger, Client $client, private readonly string $uri)
     {
-        parent::__construct($client);
+        parent::__construct($logger, $client);
     }
 
     public function getDollarBlueRate(): array

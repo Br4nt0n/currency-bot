@@ -2,30 +2,28 @@
 
 declare(strict_types=1);
 
-use App\Application\Commands\TelegramCommands\ConvertCommand;
-use App\Application\Commands\TelegramCommands\StartCommand;
-use App\Application\Handlers\ConvertStepHandler;
-use DI\Container;
-use Slim\Factory\AppFactory;
-use Telegram\Bot\Api;
+use App\Application\Handlers\ContainerHelper;
+use App\Application\Services\CurrencyServiceInterface;
+use Psr\Log\LoggerInterface;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/index.php';
 
+/** @var LoggerInterface $log */
+$log = ContainerHelper::get(LoggerInterface::class);
 
 try {
-    $telegram = new Api(getenv('BOT_API_KEY'));
+    /** @var Redis $redis */
+    $redis = ContainerHelper::get(Redis::class);
+    $redis->flushAll();
 
-    $telegram->addCommands([StartCommand::class, ConvertCommand::class]);
-    $telegram->commandsHandler(true);
-    $update = $telegram->getWebhookUpdate();
-    // Обработка шагов после команды
-    $app = AppFactory::create();
-    $redis = $app->getContainer()->get(Redis::class);
-    ConvertStepHandler::handle($telegram, $update, $redis);
+    /** @var CurrencyServiceInterface $service */
+    $service = ContainerHelper::get(CurrencyServiceInterface::class);
+    $service->getDollarBlueRate();
+    $service->getUsdRates();
+    sleep(5);
+    $service->getRubRates();
+    $log->info('Курсы валют обновлены ' . date('Y-m-d H:i:s'));
 
-//    $update->callbackQuery->get('data');
 } catch (Throwable $e) {
-    // Silence is golden!
-    file_put_contents('error.log', $e->getMessage());
-     echo $e->getMessage();
+    $log->error($e->getMessage());
 }

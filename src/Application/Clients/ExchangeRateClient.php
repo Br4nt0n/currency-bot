@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Clients;
 
 use GuzzleHttp\Client;
+use Psr\Log\LoggerInterface;
 
 class ExchangeRateClient extends BaseClient
 {
@@ -18,9 +19,14 @@ class ExchangeRateClient extends BaseClient
 
     private const string LIVE_URI = '/live?access_key=%s&source=%s&currencies=%s';
 
-    public function __construct(private readonly Client $client, private readonly string $url, private readonly string $apiKey)
+    public function __construct(
+        private LoggerInterface $logger,
+        private readonly Client $client,
+        private readonly string $url,
+        private readonly string $apiKey
+    )
     {
-        parent::__construct($client);
+        parent::__construct($logger, $client);
         $this->path = $this->url . self::LIVE_URI;
     }
 
