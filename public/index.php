@@ -103,6 +103,8 @@ $container->set(Api::class, function () {
     return $telegram;
 });
 
+ContainerHelper::setContainer($container);
+
 // Register middleware
 $middleware = require __DIR__ . '/../app/middleware.php';
 $middleware($app);
@@ -145,4 +147,3 @@ $response = $app->handle($request);
 $responseEmitter = new ResponseEmitter();
 $responseEmitter->emit($response);
 
-ContainerHelper::setContainer($container);

@@ -10,6 +10,7 @@ require __DIR__ . '/index.php';
 
 /** @var LoggerInterface $log */
 $log = ContainerHelper::get(LoggerInterface::class);
+$log->info('Обновление курсов валют');
 
 try {
     /** @var Redis $redis */

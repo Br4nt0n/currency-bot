@@ -15,7 +15,7 @@ use Redis;
 
 final class CurrencyService implements CurrencyServiceInterface
 {
-    private const int TTL = 3600 * 24;
+    private const int TTL = 3600 * 12;
 
     public function __construct(
         private readonly ExchangeRateRepository $exchangeRateRepository,
