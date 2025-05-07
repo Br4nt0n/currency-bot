@@ -27,7 +27,6 @@
         "ext-redis": "*",
         "guzzlehttp/guzzle": "^7.0",
         "irazasyed/telegram-bot-sdk": "3.x-dev",
-        "longman/telegram-bot": "v1.x-dev",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^6.4",
         "slim/psr7": "^1.5",
