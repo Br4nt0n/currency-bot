@@ -2,8 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Application\Repositories\BlueLyticsRepository;
+use App\Application\Repositories\ExchangeRateRepository;
+use App\Application\Services\ConversionInterface;
+use App\Application\Services\ConversionService;
+use App\Application\Services\CurrencyService;
+use App\Application\Services\CurrencyServiceInterface;
+use App\Application\Services\MongoDbService;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
+use MongoDB\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
@@ -25,6 +33,26 @@ return function (ContainerBuilder $containerBuilder) {
             $logger->pushHandler($handler);
 
             return $logger;
+        },
+
+        CurrencyServiceInterface::class => function (ContainerInterface $c) {
+            return new CurrencyService(
+                $c->get(ExchangeRateRepository::class),
+                $c->get(BlueLyticsRepository::class),
+                $c->get(Redis::class),
+            );
+        },
+
+        ConversionInterface::class => function (ContainerInterface $c) {
+            return new ConversionService(
+                $c->get(Redis::class),
+                $c->get(CurrencyServiceInterface::class),
+            );
+        },
+
+        MongoDbService::class => function (ContainerInterface $c) {
+            $client = $c->get(Client::class);
+            return new MongoDbService($client);
         },
     ]);
 };

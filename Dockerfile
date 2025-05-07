@@ -15,8 +15,11 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libonig-dev \
     libsqlite3-dev \
+	pkg-config \
     && docker-php-ext-install zip pdo pdo_mysql pdo_sqlite mbstring xml intl opcache \
     && pecl install redis xdebug \
+	&& pecl install mongodb \
+	&& docker-php-ext-enable mongodb \
     && docker-php-ext-enable redis xdebug \
     && rm -rf /var/lib/apt/lists/*
 

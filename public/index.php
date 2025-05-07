@@ -7,16 +7,11 @@ use App\Application\Clients\ExchangeRateClient;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
-use App\Application\Repositories\BlueLyticsRepository;
-use App\Application\Repositories\ExchangeRateRepository;
 use App\Application\ResponseEmitter\ResponseEmitter;
-use App\Application\Services\ConversionInterface;
-use App\Application\Services\ConversionService;
-use App\Application\Services\CurrencyService;
-use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use GuzzleHttp\Client;
+use MongoDB\Driver\ServerApi;
 use Psr\Log\LoggerInterface;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
@@ -79,21 +74,6 @@ $container->set(BlueLyticsClient::class, function () use ($container)  {
     );
 });
 
-$container->set(CurrencyServiceInterface::class, function () use ($container) {
-    return new CurrencyService(
-        $container->get(ExchangeRateRepository::class),
-        $container->get(BlueLyticsRepository::class),
-        $container->get(Redis::class),
-    );
-});
-
-$container->set(ConversionInterface::class, function () use ($container) {
-    return new ConversionService(
-        $container->get(Redis::class),
-        $container->get(CurrencyServiceInterface::class),
-    );
-});
-
 $container->set(Api::class, function () {
     $telegram = new Api(getenv('BOT_API_KEY'));
     $telegram->setWebhook([
@@ -101,6 +81,17 @@ $container->set(Api::class, function () {
     ]);
 
     return $telegram;
+});
+
+$container->set(\MongoDB\Client::class, function () {
+    $apiVersion = new ServerApi((string)ServerApi::V1);
+    $user = getenv('MONGO_USERNAME');
+    $pass = getenv('MONGO_PASSWORD');
+    $server = getenv('MONGO_URI');
+    return new \MongoDB\Client(
+        uri: sprintf($server, $user, $pass),
+        driverOptions: ['serverApi' => $apiVersion]
+    );
 });
 
 ContainerHelper::setContainer($container);

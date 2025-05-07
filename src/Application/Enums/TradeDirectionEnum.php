@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Application\Enums;
+
+enum TradeDirectionEnum: string
+{
+    case BUY = 'buy';
+
+    case SELL = 'sell';
+}
