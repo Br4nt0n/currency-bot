@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Application\Repositories\BlueLyticsRepository;
 use App\Application\Repositories\ExchangeRateRepository;
+use App\Application\Repositories\MongoUsdRepository;
 use App\Application\Services\ConversionInterface;
 use App\Application\Services\ConversionService;
 use App\Application\Services\CurrencyService;
@@ -50,9 +51,14 @@ return function (ContainerBuilder $containerBuilder) {
             );
         },
 
-        MongoDbService::class => function (ContainerInterface $c) {
+        MongoUsdRepository::class => function (ContainerInterface $c) {
             $client = $c->get(Client::class);
-            return new MongoDbService($client);
+            return new MongoUsdRepository($client);
+        },
+
+        MongoDbService::class => function (ContainerInterface $c) {
+            $repository = $c->get(MongoUsdRepository::class);
+            return new MongoDbService($repository);
         },
     ]);
 };
