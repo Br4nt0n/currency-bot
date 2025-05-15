@@ -13,19 +13,23 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libxml2-dev \
     libssl-dev \
+    libcurl4-openssl-dev \
+	libicu-dev libxml2-dev zlib1g-dev libpq-dev gnupg \
     libonig-dev \
     libsqlite3-dev \
 	pkg-config \
+    ca-certificates \
     && docker-php-ext-install zip pdo pdo_mysql pdo_sqlite mbstring xml intl opcache \
     && pecl install redis xdebug \
 	&& pecl install mongodb \
 	&& docker-php-ext-enable mongodb \
     && docker-php-ext-enable redis xdebug \
+    && apt-get install -y ca-certificates \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 
 # Копируем только файлы зависимостей — для кэширования слоёв
 COPY composer.json composer.lock /var/www/html/

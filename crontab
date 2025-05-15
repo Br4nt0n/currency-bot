@@ -1,1 +1,1 @@
-0 0,12 * * * php /var/www/html/public/hook.php >> /var/log/crontab.log 2>&1
+0 0,12 * * * php /var/www/html/public/hook.php >> /dev/stdout 2>&1

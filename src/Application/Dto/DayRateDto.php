@@ -16,7 +16,7 @@ class DayRateDto
         public ?string $date = null,
     )
     {
-        $this->date = date('Y-m-d');
+        $this->date = date('Y-m-d H:i:s');
     }
 
 }
