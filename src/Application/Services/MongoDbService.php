@@ -25,4 +25,8 @@ final class MongoDbService
         return $collection;
     }
 
+    public function getDollarChart(): array
+    {
+        return $this->usdRepository->getLastThirtyDays();
+    }
 }

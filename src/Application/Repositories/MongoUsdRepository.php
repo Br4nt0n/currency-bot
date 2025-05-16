@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Application\Repositories;
 
 use App\Application\Dto\DayRateDto;
+use App\Application\Enums\CurrencyPairEnum;
+use App\Application\Enums\TradeDirectionEnum;
+use DateTime;
+use MongoDB\BSON\UTCDateTime;
 use MongoDB\Client;
 use MongoDB\Collection;
 
@@ -30,6 +34,32 @@ class MongoUsdRepository extends AbstractMongoRepository
         $result = $this->collection->insertOne($rateDto);
 
         return $result->isAcknowledged();
+    }
+
+    public function getLastThirtyDays(): array
+    {
+        $fromDate = new UTCDateTime((new DateTime('-30 days'))->getTimestamp() * 1000);
+
+        $filter = [
+            'date'      => ['$gte' => $fromDate],
+            'pair'      => CurrencyPairEnum::USD_RUB->value,
+            'direction' => TradeDirectionEnum::BUY->value,
+        ];
+
+        $options = [
+            'sort'  => ['date' => -1], // последние сверху (опционально)
+            'limit' => 50, // ограничить количество (опционально)
+        ];
+
+        $cursor = $this->collection->find($filter, $options);
+
+        return array_map(function ($item) {
+            return [
+                'id' => (string)$item['_id'],
+                'value' => $item['value'],
+                'date' => $item['date']->toDateTime()->format('m.d'),
+            ];
+        }, $cursor->toArray());
     }
 
 }

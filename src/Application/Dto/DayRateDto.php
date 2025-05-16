@@ -6,6 +6,7 @@ namespace App\Application\Dto;
 
 use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Enums\TradeDirectionEnum;
+use MongoDB\BSON\UTCDateTime;
 
 class DayRateDto
 {
@@ -13,10 +14,9 @@ class DayRateDto
         public CurrencyPairEnum $pair,
         public TradeDirectionEnum $direction,
         public float $value,
-        public ?string $date = null,
+        public ?UTCDateTime $date = new UTCDateTime(),
     )
     {
-        $this->date = date('Y-m-d H:i:s');
     }
 
 }

@@ -21,10 +21,12 @@ abstract class AbstractMongoRepository
     {
         $this->client->selectDatabase('admin')->command(['ping' => 1]);
 
-        return "Pinged your deployment. You successfully connected to MongoDB!\n ";
+        return "Pinged your deployment. You successfully connected to MongoDB with " . static::class;
     }
 
     abstract public function readCollection(): array;
 
     abstract public function saveDayRate(DayRateDto $rateDto): bool;
+
+    abstract public function getLastThirtyDays(): array;
 }
