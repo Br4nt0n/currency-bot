@@ -10,6 +10,7 @@ use App\Application\Services\ConversionService;
 use App\Application\Services\CurrencyService;
 use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Services\MongoDbService;
+use App\Application\Services\QuickChartService;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use MongoDB\Client;
@@ -59,6 +60,12 @@ return function (ContainerBuilder $containerBuilder) {
         MongoDbService::class => function (ContainerInterface $c) {
             $repository = $c->get(MongoUsdRepository::class);
             return new MongoDbService($repository);
+        },
+
+        QuickChartService::class => function (ContainerInterface $c) {
+            return new QuickChartService(
+                $c->get(Redis::class),
+            );
         },
     ]);
 };

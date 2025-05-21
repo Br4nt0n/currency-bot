@@ -36,13 +36,13 @@ class MongoUsdRepository extends AbstractMongoRepository
         return $result->isAcknowledged();
     }
 
-    public function getLastThirtyDays(): array
+    public function getLastThirtyDays(CurrencyPairEnum $pair): array
     {
         $fromDate = new UTCDateTime((new DateTime('-30 days'))->getTimestamp() * 1000);
 
         $filter = [
             'date'      => ['$gte' => $fromDate],
-            'pair'      => CurrencyPairEnum::USD_RUB->value,
+            'pair'      => $pair->value,
             'direction' => TradeDirectionEnum::BUY->value,
         ];
 

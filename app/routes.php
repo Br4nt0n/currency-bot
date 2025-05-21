@@ -7,12 +7,10 @@ use App\Application\Actions\Currency\DollarBlueAction;
 use App\Application\Actions\Currency\DollarRateAction;
 use App\Application\Actions\Currency\RubleRateAction;
 use App\Application\Actions\Telegram\BotWebhook;
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
+use Slim\Psr7\Stream;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
@@ -37,8 +35,17 @@ return function (App $app) {
 
     $app->map(['GET', 'POST'], '/telegram/webhook', BotWebhook::class);
 
-    $app->group('/users', function (Group $group) {
-        $group->get('', ListUsersAction::class);
-        $group->get('/{id}', ViewUserAction::class);
+    $app->get('/chart/{hash}', function (Request $request, Response $response, $args) {
+        $hash = $args['hash'];
+        $filePath = "/tmp/graph_$hash.png";
+
+        if (!file_exists($filePath)) {
+            return $response->withStatus(404 ,'Not Found');
+        }
+
+        $stream = new Stream(fopen($filePath, 'rb'));
+        return $response
+            ->withHeader('Content-Type', 'image/png')
+            ->withBody($stream);
     });
 };

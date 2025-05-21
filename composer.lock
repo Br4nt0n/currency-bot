@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fbb176ff5c92b23d4c5acb3537ccf48",
+    "content-hash": "a82eac643ec0e9fbb5cfb685b19bd7fe",
     "packages": [
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -608,6 +608,56 @@
                 }
             ],
             "time": "2024-07-18T11:15:46+00:00"
+        },
+        {
+            "name": "ianw/quickchart",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/typpo/quickchart-php.git",
+                "reference": "5f01c4daa10b284ec8565cdeda43bd270ecdc4b5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/typpo/quickchart-php/zipball/5f01c4daa10b284ec8565cdeda43bd270ecdc4b5",
+                "reference": "5f01c4daa10b284ec8565cdeda43bd270ecdc4b5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ian Webster",
+                    "homepage": "https://quickchart.io/"
+                }
+            ],
+            "description": "QuickChart chart API",
+            "homepage": "http://github.com/typpo/quickchart-php",
+            "keywords": [
+                "bar-chart",
+                "chart",
+                "chart-api",
+                "charts",
+                "image",
+                "line-chart"
+            ],
+            "support": {
+                "issues": "https://github.com/typpo/quickchart-php/issues",
+                "source": "https://github.com/typpo/quickchart-php/tree/main"
+            },
+            "time": "2024-01-16T19:12:44+00:00"
         },
         {
             "name": "illuminate/collections",
@@ -5674,6 +5724,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "ianw/quickchart": 20,
         "irazasyed/telegram-bot-sdk": 20,
         "mongodb/mongodb": 20
     },
@@ -5681,7 +5732,9 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4 || ^8.0",
+        "ext-gd": "*",
         "ext-json": "*",
+        "ext-mongodb": "*",
         "ext-redis": "*"
     },
     "platform-dev": {},

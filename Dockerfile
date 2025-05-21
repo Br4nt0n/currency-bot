@@ -14,17 +14,20 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libssl-dev \
     libcurl4-openssl-dev \
-	libicu-dev libxml2-dev zlib1g-dev libpq-dev gnupg \
+    libicu-dev \
+    zlib1g-dev \
     libonig-dev \
     libsqlite3-dev \
-	pkg-config \
+    pkg-config \
     ca-certificates \
-    && docker-php-ext-install zip pdo pdo_mysql pdo_sqlite mbstring xml intl opcache \
-    && pecl install redis xdebug \
-	&& pecl install mongodb \
-	&& docker-php-ext-enable mongodb \
-    && docker-php-ext-enable redis xdebug \
-    && apt-get install -y ca-certificates \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        zip pdo pdo_mysql pdo_sqlite mbstring xml intl opcache gd \
+    && pecl install redis xdebug mongodb \
+    && docker-php-ext-enable redis xdebug mongodb \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
