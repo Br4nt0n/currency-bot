@@ -10,7 +10,7 @@ use Redis;
 
 class QuickChartService
 {
-    public const string CACHE_KEY = 'currency_%s_graph:%s';
+    public const string CACHE_KEY = 'currency_%s_graph';
 
     private const int TTL = 43200;
 
@@ -38,16 +38,14 @@ class QuickChartService
 
         $configHash = hash('sha256', json_encode($chartConfig));
         $imagePath = "/tmp/graph_$configHash.png";
-        $cacheKey = sprintf(self::CACHE_KEY, strtolower($pairEnum->value), $configHash);
+        $cacheKey = sprintf(self::CACHE_KEY, strtolower($pairEnum->value));
 
         if (!$this->redis->exists($cacheKey)) {
             $this->quickchart->setConfig(json_encode($chartConfig));
             $this->quickchart->toFile($imagePath);
+            $content = base64_encode(file_get_contents($imagePath));
 
-            $this->redis->setex($cacheKey, self::TTL, $imagePath);
-        } else {
-            $imagePath = $this->redis->get($cacheKey);
-            echo "✅ График из кэша: $imagePath\n";
+            $this->redis->setex($cacheKey, self::TTL, $content);
         }
     }
 

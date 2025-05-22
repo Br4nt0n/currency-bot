@@ -8,6 +8,7 @@ use App\Application\Enums\TradeDirectionEnum;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Services\MongoDbService;
+use App\Application\Services\QuickChartService;
 use Psr\Log\LoggerInterface;
 
 require __DIR__ . '/index.php';
@@ -50,6 +51,12 @@ try {
         value: $usdDto->usdArs,
     ));
     $log->info('Данные записаны в Mongo DB');
+
+    /** @var QuickChartService $quickChartService */
+    $quickChartService = ContainerHelper::get(QuickChartService::class);
+    $data = $mongoService->getCurrencyPairChartValues(CurrencyPairEnum::USD_RUB);
+    $quickChartService->makeChart($data['dates'], $data['values'], CurrencyPairEnum::USD_RUB);
+    $log->info('График для доллара составлен');
 
 } catch (Throwable $e) {
     $log->error($e->getMessage());
