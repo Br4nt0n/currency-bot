@@ -8,7 +8,7 @@ use App\Application\Clients\ExchangeRateClient;
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdDto;
 
-final class ExchangeRateRepository
+class ExchangeRateRepository
 {
     public function __construct(private readonly ExchangeRateClient $client)
     {

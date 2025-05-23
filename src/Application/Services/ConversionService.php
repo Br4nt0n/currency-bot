@@ -35,7 +35,7 @@ final class ConversionService implements ConversionInterface
         }
 
         return new ARSRatesDto(
-            rub: round($amount / $arsRub),
+            rub: round($amount / $arsRub, 2),
             usd: round($amount / (float)$arsUsd, 2),
             usd_blue: round($amount / (float)$usdBlue, 2),
         );
@@ -47,11 +47,11 @@ final class ConversionService implements ConversionInterface
         $usdRub = $this->redis->get(CurrencyServiceInterface::USD_RUB);
         $usdArs = $this->redis->get(CurrencyServiceInterface::USD_ARS);
 
-        if ($pesoBlueValue === null) {
-            $pesoBlueValue = $this->service->getDollarBlueRate()?->buy;
+        if ($pesoBlueValue === false) {
+            $pesoBlueValue = $this->service->getDollarBlueRate()->buy;
         }
 
-        if ($usdRub === null || $usdArs === null) {
+        if ($usdRub === false || $usdArs === false) {
             $usdRate = $this->service->getUsdRates();
             $usdRub = $usdRate->usdRub;
             $usdArs = $usdRate->usdArs;
@@ -69,7 +69,7 @@ final class ConversionService implements ConversionInterface
         $rubArs = $this->redis->get(CurrencyServiceInterface::RUB_ARS);
         $rubUsd = $this->redis->get(CurrencyServiceInterface::RUB_USD);
 
-        if ($rubArs === null || $rubUsd === null) {
+        if ($rubArs === false || $rubUsd === false) {
             $rubRates = $this->service->getRubRates();
             $rubArs = $rubRates->rubArs;
             $rubUsd = $rubRates->rubUsd;

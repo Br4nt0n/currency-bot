@@ -8,7 +8,7 @@ use App\Application\Enums\CurrencyPairEnum;
 use QuickChart;
 use Redis;
 
-class QuickChartService
+final class QuickChartService
 {
     public const string CACHE_KEY = 'currency_%s_graph';
 
