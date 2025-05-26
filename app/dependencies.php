@@ -65,6 +65,7 @@ return function (ContainerBuilder $containerBuilder) {
         QuickChartService::class => function (ContainerInterface $c) {
             return new QuickChartService(
                 $c->get(Redis::class),
+                new QuickChart(),
             );
         },
     ]);

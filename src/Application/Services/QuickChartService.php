@@ -14,11 +14,8 @@ final class QuickChartService
 
     private const int TTL = 43200;
 
-    private QuickChart $quickchart;
-
-    public function __construct(private Redis $redis)
+    public function __construct(private Redis $redis, private QuickChart $quickchart)
     {
-        $this->quickchart = new QuickChart();
         $this->quickchart->setWidth(700);
         $this->quickchart->setHeight(400);
         $this->quickchart->setBackgroundColor('white');
@@ -35,15 +32,12 @@ final class QuickChartService
                 'plugins' => ['legend' => ['position' => 'bottom']],
             ]
         ];
-
-        $configHash = hash('sha256', json_encode($chartConfig));
-        $imagePath = "/tmp/graph_$configHash.png";
         $cacheKey = sprintf(self::CACHE_KEY, strtolower($pairEnum->value));
 
         if (!$this->redis->exists($cacheKey)) {
             $this->quickchart->setConfig(json_encode($chartConfig));
-            $this->quickchart->toFile($imagePath);
-            $content = base64_encode(file_get_contents($imagePath));
+            $content = $this->quickchart->toBinary();
+            $content = base64_encode($content);
 
             $this->redis->setex($cacheKey, self::TTL, $content);
         }
