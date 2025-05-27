@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Enums;
 
 enum BotCommandEnum: string
@@ -11,4 +13,11 @@ enum BotCommandEnum: string
     case CONVERT = 'convert';
 
     case CHART = 'chart';
+
+    case USD_CHOICE = 'usd_choice';
+
+    case ARS_CHOICE = 'ars_choice';
+
+    case RUB_CHOICE = 'rub_choice';
+
 }

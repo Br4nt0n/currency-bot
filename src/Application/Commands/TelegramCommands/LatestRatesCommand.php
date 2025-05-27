@@ -15,7 +15,6 @@ use Telegram\Bot\Keyboard\Keyboard;
 class LatestRatesCommand extends Command
 {
     protected string $name = BotCommandEnum::LATEST->value;
-    protected string $description = '';
 
     public function handle(): void
     {

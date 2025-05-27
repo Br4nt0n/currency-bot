@@ -15,10 +15,9 @@ use Telegram\Bot\Keyboard\Keyboard;
 
 class ChartCommand extends Command
 {
-    protected string $name = 'chart';
-    protected string $description = '';
+    protected string $name = BotCommandEnum::CHART->value;
 
-    public function handle()
+    public function handle(): void
     {
         $replyMarkup = Keyboard::make()
             ->setResizeKeyboard(true)

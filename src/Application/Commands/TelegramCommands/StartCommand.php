@@ -13,20 +13,33 @@ class StartCommand extends Command
     protected string $name = BotCommandEnum::START->value;
     protected string $description = 'Start Command to get you started';
 
-    public function handle()
+    public function handle(): void
     {
         $this->replyWithMessage([
             'text' => 'Привет! Добро пожаловать в бот конвертации валюты!',
         ]);
 
         $replyMarkup = Keyboard::make()
+            ->inline()
             ->setResizeKeyboard(true)
             ->setOneTimeKeyboard(true)
-            ->inline()
             ->row([
-                Keyboard::inlineButton(['text' =>'Конвертировать', 'callback_data' => BotCommandEnum::CONVERT]),
-                Keyboard::inlineButton(['text' =>'Узнать текущий курс', 'callback_data' => BotCommandEnum::LATEST]),
-                Keyboard::inlineButton(['text' =>'График валют за последнее время', 'callback_data' => BotCommandEnum::CHART]),
+                Keyboard::inlineButton([
+                    'text' => '💱 Конвертировать',
+                    'callback_data' => BotCommandEnum::CONVERT,
+                ]),
+            ])
+            ->row([
+                Keyboard::inlineButton([
+                    'text' => '💵 Текущий курс',
+                    'callback_data' => BotCommandEnum::LATEST,
+                ]),
+            ])
+            ->row([
+                Keyboard::inlineButton([
+                    'text' => '📈 График курса',
+                    'callback_data' => BotCommandEnum::CHART,
+                ]),
             ]);
 
         $this->replyWithMessage([

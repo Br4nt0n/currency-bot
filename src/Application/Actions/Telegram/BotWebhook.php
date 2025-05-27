@@ -52,6 +52,7 @@ class BotWebhook extends Action
 
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
+            return $this->respondWithData(['Что-то пошло не так, мы уже исправляем']);
         }
 
         return $this->respondWithData(['OK']);

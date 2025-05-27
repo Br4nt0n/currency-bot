@@ -26,18 +26,7 @@ final class ConvertStepService
         $text = $message->get('text');
         $cacheKey = sprintf(self::CHAT_ID, $chatId);
 
-        if (in_array($text, CurrencyCodeEnum::values())) {
-            $this->redis->set($cacheKey, $text);
-
-            $telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => "Вы выбрали: $text Введите требуемую сумму",
-            ]);
-
-            return true;
-        }
-
-        if ($this->redis->get($cacheKey) !== false) {
+        if ($this->redis->exists($cacheKey)) {
             if (is_numeric($text) && $text > 0) {
                 $amount = floatval($text);
                 $currency = $this->redis->get($cacheKey);
