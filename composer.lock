@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a82eac643ec0e9fbb5cfb685b19bd7fe",
+    "content-hash": "1f11d6e69a5bc6dd5b9f11306fecd85e",
     "packages": [
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -74,6 +74,53 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "colinmollenhour/credis",
+            "version": "v1.17.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/colinmollenhour/credis.git",
+                "reference": "f4930b426f6b1238b687a1ffe6ee5af7f835b40a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/f4930b426f6b1238b687a1ffe6ee5af7f835b40a",
+                "reference": "f4930b426f6b1238b687a1ffe6ee5af7f835b40a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "suggest": {
+                "ext-redis": "Improved performance for communicating with redis"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Client.php",
+                    "Cluster.php",
+                    "Sentinel.php",
+                    "Module.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Colin Mollenhour",
+                    "email": "colin@mollenhour.com"
+                }
+            ],
+            "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
+            "homepage": "https://github.com/colinmollenhour/credis",
+            "support": {
+                "issues": "https://github.com/colinmollenhour/credis/issues",
+                "source": "https://github.com/colinmollenhour/credis/tree/v1.17.0"
+            },
+            "time": "2025-02-10T18:58:46+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -2289,6 +2336,91 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "resque/php-resque",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/resque/php-resque.git",
+                "reference": "c553e1dc0c1dd18d7b16cff81bc09ed1d289f56a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/resque/php-resque/zipball/c553e1dc0c1dd18d7b16cff81bc09ed1d289f56a",
+                "reference": "c553e1dc0c1dd18d7b16cff81bc09ed1d289f56a",
+                "shasum": ""
+            },
+            "require": {
+                "colinmollenhour/credis": "~1.7",
+                "php": ">=7.3.0",
+                "psr/log": ">=1.1.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.12",
+                "phpunit/phpunit": ">=9.0 <9.6",
+                "squizlabs/php_codesniffer": "^3.10"
+            },
+            "suggest": {
+                "ext-pcntl": "REQUIRED for forking processes on platforms that support it (so anything but Windows).",
+                "ext-proctitle": "Allows php-resque to rename the title of UNIX processes to show the status of a worker.",
+                "ext-redis": "Native PHP extension for Redis connectivity. Credis will automatically utilize when available."
+            },
+            "default-branch": true,
+            "bin": [
+                "bin/resque",
+                "bin/resque-scheduler"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Resque\\": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dan Hunsaker",
+                    "email": "danhunsaker+resque@gmail.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Rajib Ahmed",
+                    "homepage": "https://github.com/rajibahmed",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Steve Klabnik",
+                    "email": "steve@steveklabnik.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Chris Boulton",
+                    "email": "chris@bigcommerce.com",
+                    "role": "Creator"
+                }
+            ],
+            "description": "Redis backed library for creating background jobs and processing them later. Based on resque for Ruby.",
+            "homepage": "http://www.github.com/resque/php-resque/",
+            "keywords": [
+                "background",
+                "job",
+                "redis",
+                "resque"
+            ],
+            "support": {
+                "issues": "https://github.com/resque/php-resque/issues",
+                "source": "https://github.com/resque/php-resque/tree/develop"
+            },
+            "time": "2025-05-18T19:14:25+00:00"
         },
         {
             "name": "slim/psr7",
@@ -5726,7 +5858,8 @@
     "stability-flags": {
         "ianw/quickchart": 20,
         "irazasyed/telegram-bot-sdk": 20,
-        "mongodb/mongodb": 20
+        "mongodb/mongodb": 20,
+        "resque/php-resque": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

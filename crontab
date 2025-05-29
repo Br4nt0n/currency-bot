@@ -1,1 +1,2 @@
 0 0,12 * * * php /var/www/html/public/hook.php >> /dev/stdout 2>&1
+1 0,12 * * * php /var/www/html/worker.php >> /dev/stdout 2>&1

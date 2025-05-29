@@ -33,6 +33,7 @@
         "mongodb/mongodb": "v2.x-dev",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^6.4",
+        "resque/php-resque": "dev-develop",
         "slim/psr7": "^1.5",
         "slim/slim": "^4.10",
         "vlucas/phpdotenv": "^5.6"
