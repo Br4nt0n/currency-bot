@@ -21,6 +21,16 @@ return function (ContainerBuilder $containerBuilder) {
                     'path' => (bool)getenv('docker') !== false ? 'php://stdout' : __DIR__ . '/../logs/app.log',
                     'level' => Logger::DEBUG,
                 ],
+                'currency-queue' => [
+                    'name' => 'slim-queue',
+                    'path' => (bool)getenv('docker') !== false ? 'php://stdout' : __DIR__ . '/../logs/queue.log',
+                    'level' => Logger::INFO,
+                ],
+                'retry-queue' => [
+                    'name' => 'slim-retry-queue',
+                    'path' => (bool)getenv('docker') !== false ? 'php://stdout' : __DIR__ . '/../logs/retry-queue.log',
+                    'level' => Logger::INFO,
+                ],
             ]);
         }
     ]);

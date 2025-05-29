@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Clients\BlueLyticsClient;
+use App\Application\Clients\ExchangeRateClient;
 use App\Application\Repositories\BlueLyticsRepository;
 use App\Application\Repositories\ExchangeRateRepository;
 use App\Application\Repositories\MongoUsdRepository;
@@ -14,11 +16,15 @@ use App\Application\Services\QuickChartService;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use MongoDB\Client;
+use MongoDB\Client as MongoDbClient;
+use MongoDB\Driver\ServerApi;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Resque\Resque;
+use Telegram\Bot\Api;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -35,6 +41,64 @@ return function (ContainerBuilder $containerBuilder) {
             $logger->pushHandler($handler);
 
             return $logger;
+        },
+
+        'queue_logger' => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+
+            $loggerSettings = $settings->get('currency-queue');
+            $logger = new Logger($loggerSettings['name']);
+            $logger->pushProcessor(new UidProcessor());
+            $logger->pushHandler(new StreamHandler($loggerSettings['path'], $loggerSettings['level']));
+
+            return $logger;
+        },
+
+        'retry_logger' => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+
+            $loggerSettings = $settings->get('retry-queue');
+            $logger = new Logger($loggerSettings['name']);
+            $logger->pushProcessor(new UidProcessor());
+            $logger->pushHandler(new StreamHandler($loggerSettings['path'], $loggerSettings['level']));
+
+            return $logger;
+        },
+
+        Redis::class => function () {
+            return new Redis([
+                'host' => getenv('REDIS_HOST'),
+                'port' => (int)getenv('REDIS_PORT'),
+                'auth' => getenv('REDIS_PASSWORD'),
+            ]);
+        },
+
+        ExchangeRateClient::class => function (ContainerInterface $c) {
+            return new ExchangeRateClient(
+                $c->get(LoggerInterface::class),
+                new \GuzzleHttp\Client(),
+                getenv('EXCHANGE_URL'),
+                getenv('FREE_CURRENCY_API_KEY'),
+            );
+        },
+
+        BlueLyticsClient::class => function (ContainerInterface $c) {
+            return new BlueLyticsClient(
+                $c->get(LoggerInterface::class),
+                new \GuzzleHttp\Client(),
+                getenv('DOLLAR_BLUE_URI'),
+            );
+        },
+
+        MongoDbClient::class => function () {
+            $apiVersion = new ServerApi((string)ServerApi::V1);
+            $user = getenv('MONGO_USERNAME');
+            $pass = getenv('MONGO_PASSWORD');
+            $server = getenv('MONGO_URI');
+            return new MongoDbClient(
+                uri: sprintf($server, $user, $pass),
+                driverOptions: ['serverApi' => $apiVersion]
+            );
         },
 
         CurrencyServiceInterface::class => function (ContainerInterface $c) {
@@ -68,5 +132,27 @@ return function (ContainerBuilder $containerBuilder) {
                 new QuickChart(),
             );
         },
+
+        Api::class => function () {
+            $telegram = new Api(getenv('BOT_API_KEY'));
+            $telegram->setWebhook([
+                'url' => getenv('APP_NAME') . 'telegram/webhook',
+            ]);
+
+            return $telegram;
+        },
+
+        Resque::class => function () {
+            $redisDsn = sprintf(
+                'redis://:%s@%s:%s',
+                getenv('REDIS_PASSWORD') ?: '',
+                getenv('REDIS_HOST') ?: 'redis_container',
+                getenv('REDIS_PORT') ?: 6379
+            );
+
+            Resque::setBackend($redisDsn);
+            return new Resque();
+        },
+
     ]);
 };

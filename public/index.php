@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Application\Clients\BlueLyticsClient;
-use App\Application\Clients\ExchangeRateClient;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
 use App\Application\ResponseEmitter\ResponseEmitter;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
-use GuzzleHttp\Client;
-use MongoDB\Driver\ServerApi;
-use Psr\Log\LoggerInterface;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Telegram\Bot\Api;
@@ -50,51 +45,6 @@ $container = $containerBuilder->build();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 $callableResolver = $app->getCallableResolver();
-
-$container->set(Redis::class, function () {
-    return new Redis([
-       'host' => getenv('REDIS_HOST'),
-       'port' => (int)getenv('REDIS_PORT'),
-       'auth' => getenv('REDIS_PASSWORD'),
-    ]);
-});
-
-$container->set(ExchangeRateClient::class, function () use ($container)  {
-    return new ExchangeRateClient(
-        $container->get(LoggerInterface::class),
-        new Client(),
-        getenv('EXCHANGE_URL'),
-        getenv('FREE_CURRENCY_API_KEY'),
-    );
-});
-
-$container->set(BlueLyticsClient::class, function () use ($container)  {
-    return new BlueLyticsClient(
-        $container->get(LoggerInterface::class),
-        new Client(),
-        getenv('DOLLAR_BLUE_URI'),
-    );
-});
-
-$container->set(Api::class, function () {
-    $telegram = new Api(getenv('BOT_API_KEY'));
-    $telegram->setWebhook([
-        'url' => getenv('APP_NAME') . 'telegram/webhook',
-    ]);
-
-    return $telegram;
-});
-
-$container->set(\MongoDB\Client::class, function () {
-    $apiVersion = new ServerApi((string)ServerApi::V1);
-    $user = getenv('MONGO_USERNAME');
-    $pass = getenv('MONGO_PASSWORD');
-    $server = getenv('MONGO_URI');
-    return new \MongoDB\Client(
-        uri: sprintf($server, $user, $pass),
-        driverOptions: ['serverApi' => $apiVersion]
-    );
-});
 
 ContainerHelper::setContainer($container);
 
