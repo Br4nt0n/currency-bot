@@ -7,11 +7,12 @@ namespace App\Application\Jobs;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\Traits\RetryableJobTrait;
 use App\Application\Log\QueueLoggerInterface;
+use App\Application\Services\CurrencyServiceInterface;
 use Psr\Log\LoggerInterface;
 use Resque\Job\Job;
 use Throwable;
 
-class ExampleJob extends Job
+class RubRatesJob extends Job
 {
     use RetryableJobTrait;
 
@@ -28,16 +29,16 @@ class ExampleJob extends Job
     {
         try {
             $this->logger->info("Starting job...", $this->args);
-            if ($this->args['attempts'] === 0) {
-                $this->logger->info("attempts" . $this->args['attempts']);
-                throw new \RuntimeException('On purpose failure');
-            }
-            echo json_encode($this->args);
-            $this->logger->info("Job completed successfully", $this->args);
+            /** @var CurrencyServiceInterface $service */
+            $service = ContainerHelper::get(CurrencyServiceInterface::class);
+            $service->getRubRates();
 
+            $class = get_class($this);
+            $this->logger->info("Job $class completed successfully", $this->args);
+            $this->logger->info('Курс rub обновлен');
         } catch (Throwable $e) {
             $this->retryOrFail($e);
         }
-
     }
+
 }

@@ -18,7 +18,6 @@ class LatestRatesCommand extends Command
 
     public function handle(): void
     {
-
         $replyMarkup = Keyboard::make()
             ->setResizeKeyboard(true)
             ->setOneTimeKeyboard(true)

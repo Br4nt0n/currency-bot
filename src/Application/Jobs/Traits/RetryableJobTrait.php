@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Jobs\Traits;
 
 use App\Application\Handlers\ContainerHelper;
+use App\Application\Log\RetryLoggerInterface;
 use Psr\Log\LoggerInterface;
-use Resque\Resque;
+use Resque\Scheduler;
 use Throwable;
 
 trait RetryableJobTrait
@@ -19,19 +20,20 @@ trait RetryableJobTrait
         $attempts++;
 
         /** @var LoggerInterface $logger */
-        $logger = ContainerHelper::get('retry_logger');
-
-        $logger->warning("Job failed on attempt $attempts: {$e->getMessage()}");
+        $logger = ContainerHelper::get(RetryLoggerInterface::class);
+        $class = get_class($this);
+        $logger->warning("Job $class failed on attempt $attempts: {$e->getMessage()}");
 
         if ($attempts < $this->maxAttempts) {
-            Resque::enqueue(
+            Scheduler::enqueueIn(
+                10,
                 $this->queue ?? 'default',
-                get_class($this),
+                $class,
                 array_merge($this->args, ['attempts' => $attempts])
             );
-            $logger->info("Job re-enqueued for attempt $attempts");
+            $logger->info("Job $class re-enqueued for attempt $attempts");
         } else {
-            $logger->error("Job permanently failed after $attempts attempts", $this->args);
+            $logger->error("Job $class permanently failed after $attempts attempts", $this->args);
         }
 
         // Важно пробросить ошибку, чтобы ResqueWorker её зафиксировал

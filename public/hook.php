@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Application\Dto\DayRateDto;
-use App\Application\Enums\CurrencyPairEnum;
-use App\Application\Enums\TradeDirectionEnum;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\BlueDollarJob;
+use App\Application\Jobs\QuickChartJob;
+use App\Application\Jobs\UsdRatesJob;
 use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Services\MongoDbService;
-use App\Application\Services\QuickChartService;
 use Psr\Log\LoggerInterface;
 use Resque\Resque;
 
@@ -18,14 +16,15 @@ $container = require __DIR__ . '/../src/bootstrap/container.php';
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_NOTICE);
 
-// подключаем очереди
-ContainerHelper::get(Resque::class);
-
 /** @var LoggerInterface $log */
 $log = ContainerHelper::get(LoggerInterface::class);
 $log->info('Обновление курсов валют ' . date('Y-m-d H:i:s'));
 
 try {
+    $queue = getenv('REDIS_QUEUE');
+    // подключаем очереди
+    ContainerHelper::get(Resque::class);
+
     $keys = [
         CurrencyServiceInterface::DOLLAR_BLUE_SELL,
         CurrencyServiceInterface::DOLLAR_BLUE_BUY,
@@ -40,42 +39,46 @@ try {
     $redis = ContainerHelper::get(Redis::class);
     $redis->del($keys);
 
-    Resque::enqueue('default', BlueDollarJob::class, [
+    // Доллар блю
+    Resque::enqueue($queue, BlueDollarJob::class, [
         'timestamp' => time(),
     ]);
     $log->info('Джоб для доллар блю создан');
 
-    /** @var CurrencyServiceInterface $service */
-    $service = ContainerHelper::get(CurrencyServiceInterface::class);
+    // график
+    Resque::enqueue($queue, QuickChartJob::class, [
+        'timestamp' => time(),
+    ]);
+    $log->info('Джоб для графика добавлен');
 
-    $usdDto = $service->getUsdRates();
-    $log->info('Курс доллара обновлен');
+    // курс доллара к рублю и песо
+    Resque::enqueue($queue, UsdRatesJob::class, [
+        'timestamp' => time(),
+    ]);
+    $log->info('Джоб курс доллара добавлен');
 
     sleep(5);
+
+    /** @var CurrencyServiceInterface $service */
+    $service = ContainerHelper::get(CurrencyServiceInterface::class);
     $service->getRubRates();
     $log->info('Курс рубля обновлен');
-    $log->info('Курсы валют обновлены ' . date('Y-m-d H:i:s'));
 
     /** @var MongoDbService $mongoService */
     $mongoService = ContainerHelper::get(MongoDbService::class);
-    $mongoService->saveUsdRate(new DayRateDto(
-        pair: CurrencyPairEnum::USD_RUB,
-        direction: TradeDirectionEnum::BUY,
-        value: $usdDto->usdRub,
-    ));
+//    $mongoService->saveUsdRate(new DayRateDto(
+//        pair: CurrencyPairEnum::USD_RUB,
+//        direction: TradeDirectionEnum::BUY,
+//        value: $usdDto->usdRub,
+//    ));
 
-    $mongoService->saveUsdRate(new DayRateDto(
-        pair: CurrencyPairEnum::USD_ARS,
-        direction: TradeDirectionEnum::BUY,
-        value: $usdDto->usdArs,
-    ));
-    $log->info('Данные записаны в Mongo DB');
-
-    /** @var QuickChartService $quickChartService */
-    $quickChartService = ContainerHelper::get(QuickChartService::class);
-    $data = $mongoService->getCurrencyPairChartValues(CurrencyPairEnum::USD_RUB);
-    $quickChartService->makeChart($data['dates'], $data['values'], CurrencyPairEnum::USD_RUB);
-    $log->info('График для доллара составлен');
+//    $mongoService->saveUsdRate(new DayRateDto(
+//        pair: CurrencyPairEnum::USD_ARS,
+//        direction: TradeDirectionEnum::BUY,
+//        value: $usdDto->usdArs,
+//    ));
+//    $log->info('Данные записаны в Mongo DB');
+    $log->info('Обновление курсов валют завершено ' . date('Y-m-d H:i:s'));
 
 } catch (Throwable $e) {
     $log->error($e->getMessage());

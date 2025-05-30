@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Application\Clients\BlueLyticsClient;
 use App\Application\Clients\ExchangeRateClient;
+use App\Application\Log\QueueLoggerInterface;
+use App\Application\Log\RetryLoggerInterface;
 use App\Application\Repositories\BlueLyticsRepository;
 use App\Application\Repositories\ExchangeRateRepository;
 use App\Application\Repositories\MongoUsdRepository;
@@ -43,7 +45,7 @@ return function (ContainerBuilder $containerBuilder) {
             return $logger;
         },
 
-        'queue_logger' => function (ContainerInterface $c) {
+        QueueLoggerInterface::class => function (ContainerInterface $c) {
             $settings = $c->get(SettingsInterface::class);
 
             $loggerSettings = $settings->get('currency-queue');
@@ -54,7 +56,7 @@ return function (ContainerBuilder $containerBuilder) {
             return $logger;
         },
 
-        'retry_logger' => function (ContainerInterface $c) {
+        RetryLoggerInterface::class => function (ContainerInterface $c) {
             $settings = $c->get(SettingsInterface::class);
 
             $loggerSettings = $settings->get('retry-queue');

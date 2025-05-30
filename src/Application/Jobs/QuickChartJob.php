@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Jobs;
 
+use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\Traits\RetryableJobTrait;
 use App\Application\Log\QueueLoggerInterface;
-use App\Application\Services\CurrencyServiceInterface;
+use App\Application\Services\MongoDbService;
+use App\Application\Services\QuickChartService;
 use Psr\Log\LoggerInterface;
 use Resque\Job\Job;
 use Throwable;
 
-class BlueDollarJob extends Job
+class QuickChartJob extends Job
 {
     use RetryableJobTrait;
 
@@ -29,17 +31,20 @@ class BlueDollarJob extends Job
     {
         try {
             $this->logger->info("Starting job...", $this->args);
+            /** @var MongoDbService $mongoDbService */
+            $mongoDbService = ContainerHelper::get(MongoDbService::class);
+            /** @var QuickChartService $quickChartService */
+            $quickChartService = ContainerHelper::get(QuickChartService::class);
 
-            /** @var CurrencyServiceInterface $service */
-            $service = ContainerHelper::get(CurrencyServiceInterface::class);
-            $service->getDollarBlueRate();
+            $data = $mongoDbService->getCurrencyPairChartValues(CurrencyPairEnum::USD_RUB);
+            $quickChartService->makeChart($data['dates'], $data['values'], CurrencyPairEnum::USD_RUB);
 
             $class = get_class($this);
             $this->logger->info("Job $class completed successfully", $this->args);
-            $this->logger->info('Курс блю доллара обновлен');
+            $this->logger->info('График для usd_rub составлен');
         } catch (Throwable $e) {
             $this->retryOrFail($e);
         }
-
     }
+
 }

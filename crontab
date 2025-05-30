@@ -1,2 +1,3 @@
 0 0,12 * * * php /var/www/html/public/hook.php >> /dev/stdout 2>&1
-1 0,12 * * * php /var/www/html/worker.php >> /dev/stdout 2>&1
+*/1 * * * * php /var/www/html/worker.php >> /dev/stdout 2>&1
+*/1 * * * * APP_INCLUDE=/var/www/html/src/bootstrap/resque_include.php php  /var/www/html/vendor/bin/resque-scheduler >> /dev/stdout 2>&1

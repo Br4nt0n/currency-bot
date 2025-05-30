@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\Handlers\ContainerHelper;
+use App\Application\Log\QueueLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Resque\JobHandler;
 use Resque\Resque;
@@ -13,7 +14,7 @@ $container = require __DIR__ . '/src/bootstrap/container.php';
 ContainerHelper::get(Resque::class);
 
 /** @var LoggerInterface $log */
-$log = ContainerHelper::get('queue_logger');
+$log = ContainerHelper::get(QueueLoggerInterface::class);
 
 $worker = new ResqueWorker(getenv('REDIS_QUEUE'));
 $worker->setLogger($log);
