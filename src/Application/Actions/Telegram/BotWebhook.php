@@ -9,7 +9,7 @@ use App\Application\Commands\TelegramCommands\ChartCommand;
 use App\Application\Commands\TelegramCommands\ConvertCommand;
 use App\Application\Commands\TelegramCommands\LatestRatesCommand;
 use App\Application\Commands\TelegramCommands\StartCommand;
-use App\Application\Factories\CommandsFactory;
+use App\Application\Factories\CommandsFactoryInterface;
 use App\Application\Services\ConvertStepService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
@@ -18,7 +18,12 @@ use Throwable;
 
 class BotWebhook extends Action
 {
-    public function __construct(LoggerInterface $logger, private Api $telegram, private ConvertStepService $stepService)
+    public function __construct(
+        LoggerInterface $logger,
+        private readonly Api $telegram,
+        private readonly ConvertStepService $stepService,
+        private readonly CommandsFactoryInterface $factory,
+    )
     {
         parent::__construct($logger);
     }
@@ -45,14 +50,15 @@ class BotWebhook extends Action
 
             if ($callback !== null) {
                 $data = $callback->get('data');
-                $command = CommandsFactory::factory($data);
+                $command = $this->factory->create($data);
                 $command->make($this->telegram, $update, []);
-                exit;
+
+                $this->respondWithData(['OK']);
             }
 
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
-            return $this->respondWithData(['Что-то пошло не так, мы уже исправляем']);
+            return $this->respondWithData(['Что-то пошло не так, мы уже исправляем'], 500);
         }
 
         return $this->respondWithData(['OK']);

@@ -15,9 +15,9 @@ use App\Application\Enums\BotCommandEnum;
 use InvalidArgumentException;
 use Telegram\Bot\Commands\Command;
 
-final class CommandsFactory
+final class CommandsFactory implements CommandsFactoryInterface
 {
-    public static function factory(string $type): Command
+    public function create(string $type): Command
     {
         return match ($type) {
             BotCommandEnum::START->value => new StartCommand(),

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Application\Clients\BlueLyticsClient;
 use App\Application\Clients\ExchangeRateClient;
+use App\Application\Factories\CommandsFactory;
+use App\Application\Factories\CommandsFactoryInterface;
 use App\Application\Log\QueueLoggerInterface;
 use App\Application\Log\RetryLoggerInterface;
 use App\Application\Repositories\BlueLyticsRepository;
@@ -154,6 +156,10 @@ return function (ContainerBuilder $containerBuilder) {
 
             Resque::setBackend($redisDsn);
             return new Resque();
+        },
+
+        CommandsFactoryInterface::class => function () {
+            return new CommandsFactory();
         },
 
     ]);
