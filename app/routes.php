@@ -10,7 +10,6 @@ use App\Application\Actions\Telegram\BotWebhook;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
-use Slim\Psr7\Stream;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
@@ -34,18 +33,4 @@ return function (App $app) {
     $app->get('/conversion', ConversionAction::class);
 
     $app->map(['GET', 'POST'], '/telegram/webhook', BotWebhook::class);
-
-    $app->get('/chart/{hash}', function (Request $request, Response $response, $args) {
-        $hash = $args['hash'];
-        $filePath = "/tmp/graph_$hash.png";
-
-        if (!file_exists($filePath)) {
-            return $response->withStatus(404 ,'Not Found');
-        }
-
-        $stream = new Stream(fopen($filePath, 'rb'));
-        return $response
-            ->withHeader('Content-Type', 'image/png')
-            ->withBody($stream);
-    });
 };

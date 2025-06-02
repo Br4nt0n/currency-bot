@@ -5,11 +5,13 @@ declare(strict_types=1);
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\BlueDollarJob;
 use App\Application\Jobs\QuickChartJob;
+use App\Application\Jobs\RubRatesJob;
 use App\Application\Jobs\UsdRatesJob;
+use App\Application\Jobs\UsdSaveMongoJob;
 use App\Application\Services\CurrencyServiceInterface;
-use App\Application\Services\MongoDbService;
 use Psr\Log\LoggerInterface;
 use Resque\Resque;
+use Resque\Scheduler;
 
 require __DIR__ . '/../vendor/autoload.php';
 $container = require __DIR__ . '/../src/bootstrap/container.php';
@@ -45,39 +47,30 @@ try {
     ]);
     $log->info('Джоб для доллар блю создан');
 
-    // график
-    Resque::enqueue($queue, QuickChartJob::class, [
-        'timestamp' => time(),
-    ]);
-    $log->info('Джоб для графика добавлен');
-
     // курс доллара к рублю и песо
     Resque::enqueue($queue, UsdRatesJob::class, [
         'timestamp' => time(),
     ]);
     $log->info('Джоб курс доллара добавлен');
 
-    sleep(5);
+    // курс рубля отложен из-за рейтлимита
+    Scheduler::enqueueIn(10, $queue, RubRatesJob::class, [
+        'timestamp' => time(),
+    ]);
+    $log->info('Джоб курс рубля добавлен');
 
-    /** @var CurrencyServiceInterface $service */
-    $service = ContainerHelper::get(CurrencyServiceInterface::class);
-    $service->getRubRates();
-    $log->info('Курс рубля обновлен');
+    // сохранение в монго дб
+    Scheduler::enqueueIn(15, $queue, UsdSaveMongoJob::class, [
+        'timestamp' => time(),
+    ]);
+    $log->info('Джоб mongoDB добавлен');
 
-    /** @var MongoDbService $mongoService */
-    $mongoService = ContainerHelper::get(MongoDbService::class);
-//    $mongoService->saveUsdRate(new DayRateDto(
-//        pair: CurrencyPairEnum::USD_RUB,
-//        direction: TradeDirectionEnum::BUY,
-//        value: $usdDto->usdRub,
-//    ));
+    // график
+    Scheduler::enqueueIn(30, $queue, QuickChartJob::class, [
+        'timestamp' => time(),
+    ]);
+    $log->info('Джоб для графика добавлен');
 
-//    $mongoService->saveUsdRate(new DayRateDto(
-//        pair: CurrencyPairEnum::USD_ARS,
-//        direction: TradeDirectionEnum::BUY,
-//        value: $usdDto->usdArs,
-//    ));
-//    $log->info('Данные записаны в Mongo DB');
     $log->info('Обновление курсов валют завершено ' . date('Y-m-d H:i:s'));
 
 } catch (Throwable $e) {

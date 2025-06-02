@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Repositories;
 
-use App\Application\Dto\DayRateDto;
 use App\Application\Enums\CurrencyPairEnum;
 use MongoDB\Client;
 use MongoDB\Database;
@@ -26,8 +25,6 @@ abstract class AbstractMongoRepository
     }
 
     abstract public function readCollection(): array;
-
-    abstract public function saveDayRate(DayRateDto $rateDto): bool;
 
     abstract public function getLastThirtyDays(CurrencyPairEnum $pair): array;
 }

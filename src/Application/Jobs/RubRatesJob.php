@@ -28,14 +28,14 @@ class RubRatesJob extends Job
     public function perform(): void
     {
         try {
-            $this->logger->info("Starting job...", $this->args);
+            $class = get_class($this);
+            $this->logger->info("Starting job $class ...", $this->args);
             /** @var CurrencyServiceInterface $service */
             $service = ContainerHelper::get(CurrencyServiceInterface::class);
             $service->getRubRates();
 
-            $class = get_class($this);
             $this->logger->info("Job $class completed successfully", $this->args);
-            $this->logger->info('Курс rub обновлен');
+            $this->logger->info('Курс RUB обновлен');
         } catch (Throwable $e) {
             $this->retryOrFail($e);
         }

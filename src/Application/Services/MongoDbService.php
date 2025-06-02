@@ -9,15 +9,22 @@ use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Repositories\MongoUsdRepository;
 use MongoException;
 
-final class MongoDbService
+final readonly class MongoDbService
 {
-    public function __construct(private readonly MongoUsdRepository $usdRepository)
+    public function __construct(private MongoUsdRepository $usdRepository)
     {
     }
 
-    public function saveUsdRate(DayRateDto $rateDto): bool
+    public function saveUsdRate(DayRateDto $rateDto): true
     {
-        return $this->usdRepository->saveDayRate($rateDto);
+        $result = $this->usdRepository->saveDayRate($rateDto);
+
+        if ($result !== true) {
+            $class = get_class($this->usdRepository);
+            throw new MongoException("Cannot save to $class");
+        }
+
+        return true;
     }
 
     public function readCollection(): array
