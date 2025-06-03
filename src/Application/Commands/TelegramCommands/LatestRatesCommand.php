@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Commands\TelegramCommands;
 
 use App\Application\Enums\BotCommandEnum;
+use App\Application\Exceptions\CurrencyException;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Services\CurrencyService;
 use App\Application\Services\CurrencyServiceInterface;
@@ -53,16 +54,20 @@ class LatestRatesCommand extends Command
 
         $usdRub = $redis->get(CurrencyServiceInterface::USD_RUB);
         $usdArs = $redis->get(CurrencyServiceInterface::USD_ARS);
-
-        if ($usdRub === false || $usdArs === false) {
-            $usdRate = $service->getUsdRates();
-            $usdRub = $usdRate->usdRub;
-            $usdArs = $usdRate->usdArs;
-        }
-
         $rubArs = $redis->get(CurrencyServiceInterface::RUB_ARS);
 
-        return "На $date доллар составляет: 
+        if ($usdRub === false || $usdArs === false || $rubArs === false) {
+            throw new CurrencyException('Latest rates currency not set!');
+        }
+
+        $usdBlueSell = round((float)$usdBlueSell, 2);
+        $usdBlueBuy = round((float)$usdBlueBuy, 2);
+        $usdRub = round((float)$usdRub, 2);
+        $usdArs = round((float)$usdArs, 2);
+        $rubArs = round((float)$rubArs, 2);
+
+        return "На $date 
+            $ Доллар составляет: 
                 Блю курс:
                     Продажа: $usdBlueSell
                     Покупка: $usdBlueBuy
@@ -70,9 +75,10 @@ class LatestRatesCommand extends Command
                     Покупка: $usdRub
                 Официальный (песо): 
                     Покупка: $usdArs
-                Рубль составляет: 
-                    Официальный (песо): 
-                        Покупка: $rubArs
+                    
+            ₽ Рубль составляет: 
+                Официальный (песо): 
+                    Покупка: $rubArs
         ";
     }
 }

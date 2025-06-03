@@ -6,6 +6,7 @@ namespace App\Application\Factories;
 
 use App\Application\Commands\TelegramCommands\ArsCommand;
 use App\Application\Commands\TelegramCommands\ChartCommand;
+use App\Application\Commands\TelegramCommands\CurrencyChartCommand;
 use App\Application\Commands\TelegramCommands\RubCommand;
 use App\Application\Commands\TelegramCommands\UsdCommand;
 use App\Application\Commands\TelegramCommands\ConvertCommand;
@@ -23,6 +24,7 @@ final class CommandsFactory implements CommandsFactoryInterface
             BotCommandEnum::START->value => new StartCommand(),
             BotCommandEnum::CONVERT->value => new ConvertCommand(),
             BotCommandEnum::CHART->value => new ChartCommand(),
+            BotCommandEnum::USD_RUB->value, BotCommandEnum::USD_ARS->value => new CurrencyChartCommand(),
             BotCommandEnum::LATEST->value => new LatestRatesCommand(),
             BotCommandEnum::USD_CHOICE->value => new UsdCommand(),
             BotCommandEnum::RUB_CHOICE->value => new RubCommand(),

@@ -18,7 +18,7 @@ use Resque\Exceptions\RedisException;
 use Resque\Job\Job;
 use Throwable;
 
-class UsdSaveMongoJob extends Job
+class UsdRateSaveMongoJob extends Job
 {
     use RetryableJobTrait;
 

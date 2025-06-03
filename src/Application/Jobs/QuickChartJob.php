@@ -38,6 +38,11 @@ class QuickChartJob extends Job
 
             $data = $mongoDbService->getCurrencyPairChartValues(CurrencyPairEnum::USD_RUB);
             $quickChartService->makeChart($data['dates'], $data['values'], CurrencyPairEnum::USD_RUB);
+            $this->logger->info('График для usd_rub составлен');
+
+            $data = $mongoDbService->getCurrencyPairChartValues(CurrencyPairEnum::USD_ARS);
+            $quickChartService->makeChart($data['dates'], $data['values'], CurrencyPairEnum::USD_ARS);
+            $this->logger->info('График для usd_ars составлен');
 
             $class = get_class($this);
             $this->logger->info("Job $class completed successfully", $this->args);

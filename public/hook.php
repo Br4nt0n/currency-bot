@@ -8,7 +8,7 @@ use App\Application\Jobs\BlueDollarJob;
 use App\Application\Jobs\QuickChartJob;
 use App\Application\Jobs\RubRatesJob;
 use App\Application\Jobs\UsdRatesJob;
-use App\Application\Jobs\UsdSaveMongoJob;
+use App\Application\Jobs\UsdRateSaveMongoJob;
 use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Services\QuickChartService;
 use Psr\Log\LoggerInterface;
@@ -29,7 +29,8 @@ try {
     // подключаем очереди
     ContainerHelper::get(Resque::class);
     $chartKey = QuickChartService::CACHE_KEY;
-    $chartKey = sprintf($chartKey, strtolower(CurrencyPairEnum::USD_RUB->value));
+    $chartRubKey = sprintf($chartKey, strtolower(CurrencyPairEnum::USD_RUB->value));
+    $chartArsKey = sprintf($chartKey, strtolower(CurrencyPairEnum::USD_ARS->value));
 
     $keys = [
         CurrencyServiceInterface::DOLLAR_BLUE_SELL,
@@ -40,7 +41,8 @@ try {
         CurrencyServiceInterface::RUB_USD,
         CurrencyServiceInterface::USD_ARS_SELL,
         CurrencyServiceInterface::USD_ARS_BUY,
-        $chartKey,
+        $chartRubKey,
+        $chartArsKey,
     ];
     /** @var Redis $redis */
     $redis = ContainerHelper::get(Redis::class);
@@ -65,7 +67,7 @@ try {
     $log->info('Джоб курс рубля добавлен');
 
     // сохранение в монго дб
-    Scheduler::enqueueIn(30, $queue, UsdSaveMongoJob::class, [
+    Scheduler::enqueueIn(30, $queue, UsdRateSaveMongoJob::class, [
         'timestamp' => time(),
     ]);
     $log->info('Джоб mongoDB добавлен');
