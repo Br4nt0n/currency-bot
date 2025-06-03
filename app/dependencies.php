@@ -18,6 +18,7 @@ use App\Application\Services\CurrencyServiceInterface;
 use App\Application\Services\MongoDbService;
 use App\Application\Services\QuickChartService;
 use App\Application\Settings\SettingsInterface;
+use App\Application\Storages\MongoUsdStorage;
 use DI\ContainerBuilder;
 use MongoDB\Client;
 use MongoDB\Client as MongoDbClient;
@@ -122,7 +123,8 @@ return function (ContainerBuilder $containerBuilder) {
 
         MongoUsdRepository::class => function (ContainerInterface $c) {
             $client = $c->get(Client::class);
-            return new MongoUsdRepository($client);
+            $storage = new MongoUsdStorage($client);
+            return new MongoUsdRepository($storage);
         },
 
         MongoDbService::class => function (ContainerInterface $c) {

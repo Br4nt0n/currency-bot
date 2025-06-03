@@ -10,8 +10,8 @@ use App\Application\Enums\TradeDirectionEnum;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\Traits\RetryableJobTrait;
 use App\Application\Log\QueueLoggerInterface;
+use App\Application\Repositories\MongoUsdRepository;
 use App\Application\Services\CurrencyServiceInterface;
-use App\Application\Services\MongoDbService;
 use Psr\Log\LoggerInterface;
 use Redis;
 use Resque\Exceptions\RedisException;
@@ -50,15 +50,15 @@ class UsdSaveMongoJob extends Job
                 throw new RedisException(CurrencyServiceInterface::USD_ARS . " value no presents!");
             }
 
-            /** @var MongoDbService $mongoService */
-            $mongoService = ContainerHelper::get(MongoDbService::class);
-            $mongoService->saveUsdRate(new DayRateDto(
+            /** @var MongoUsdRepository $mongoRepository */
+            $mongoRepository = ContainerHelper::get(MongoUsdRepository::class);
+            $mongoRepository->saveDayRate(new DayRateDto(
                 pair: CurrencyPairEnum::USD_RUB,
                 direction: TradeDirectionEnum::BUY,
                 value: (float)$usdRub,
             ));
 
-            $mongoService->saveUsdRate(new DayRateDto(
+            $mongoRepository->saveDayRate(new DayRateDto(
                 pair: CurrencyPairEnum::USD_ARS,
                 direction: TradeDirectionEnum::BUY,
                 value: (float)$usdArs,

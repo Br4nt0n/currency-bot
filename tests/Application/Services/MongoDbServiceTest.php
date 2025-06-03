@@ -9,46 +9,41 @@ use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Enums\TradeDirectionEnum;
 use App\Application\Repositories\MongoUsdRepository;
 use App\Application\Services\MongoDbService;
+use App\Application\Storages\MongoUsdStorage;
+use DateTime;
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\Driver\CursorInterface;
 use MongoException;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 class MongoDbServiceTest extends TestCase
 {
-    private MongoUsdRepository|MockObject $repository;
     private MongoDbService $service;
+    private MockObject|MongoUsdStorage $storage;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->getMockBuilder(MongoUsdRepository::class)->disableOriginalConstructor()->getMock();
-        $this->service = new MongoDbService($this->repository);
-    }
-
-    public function testSaveUsdRate(): void
-    {
-        $this->repository->method('saveDayRate')->willReturn(true);
-        $result = $this->service->saveUsdRate(new DayRateDto(
-            pair: CurrencyPairEnum::USD_RUB,
-            direction: TradeDirectionEnum::BUY,
-            value: 5.5
-        ));
-
-        $this->assertTrue($result);
+        $this->storage = $this->getMockBuilder(MongoUsdStorage::class)->disableOriginalConstructor()->getMock();
+        $repository = new MongoUsdRepository($this->storage);
+        $this->service = new MongoDbService($repository);
     }
 
     public function testGetCurrencyPairChartValues(): void
     {
+        $cursor = $this->getMockBuilder(CursorInterface::class)->getMock();
         $map = [
-            ['id' => 1, 'value'=> 5.1, 'date' => '05.01'],
-            ['id' => 2, 'value'=> 5.2, 'date' => '05.01'],
-            ['id' => 3, 'value'=> 5.2, 'date' => '05.02'],
-            ['id' => 4, 'value'=> 5.3, 'date' => '05.02'],
-            ['id' => 5, 'value'=> 5.3, 'date' => '05.03'],
-            ['id' => 6, 'value'=> 5.4, 'date' => '05.03'],
+            ['_id' => 1, 'value'=> 5.1, 'date' => new UTCDateTime(DateTime::createFromFormat('m.d', '05.01'))],
+            ['_id' => 2, 'value'=> 5.2, 'date' => new UTCDateTime(DateTime::createFromFormat('m.d', '05.01'))],
+            ['_id' => 3, 'value'=> 5.2, 'date' => new UTCDateTime(DateTime::createFromFormat('m.d', '05.02'))],
+            ['_id' => 4, 'value'=> 5.3, 'date' => new UTCDateTime(DateTime::createFromFormat('m.d', '05.02'))],
+            ['_id' => 5, 'value'=> 5.3, 'date' => new UTCDateTime(DateTime::createFromFormat('m.d', '05.03'))],
+            ['_id' => 6, 'value'=> 5.4, 'date' => new UTCDateTime(DateTime::createFromFormat('m.d', '05.03'))],
         ];
-        $this->repository->method('getLastThirtyDays')->willReturn($map);
+        $cursor->expects(self::once())->method('toArray')->willReturn($map);
+        $this->storage->expects(self::once())->method('find')->willReturn($cursor);
 
         $result = $this->service->getCurrencyPairChartValues(CurrencyPairEnum::USD_RUB);
 

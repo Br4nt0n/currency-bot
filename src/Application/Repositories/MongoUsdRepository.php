@@ -7,38 +7,30 @@ namespace App\Application\Repositories;
 use App\Application\Dto\DayRateDto;
 use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Enums\TradeDirectionEnum;
+use App\Application\Storages\MongoStorageInterface;
 use DateTime;
 use MongoDB\BSON\UTCDateTime;
-use MongoDB\Client;
-use MongoDB\Collection;
 
 class MongoUsdRepository extends AbstractMongoRepository
 {
-    private const string COLLECTION = 'USD';
-
-    private Collection $collection;
-
-    public function __construct(Client $client)
+    public function __construct(MongoStorageInterface $storage)
     {
-        parent::__construct($client);
-        $this->collection = $this->database->selectCollection(self::COLLECTION);
+        parent::__construct($storage);
     }
 
     public function readCollection(): array
     {
-        return $this->collection->find()->toArray();
+        return $this->storage->read();
     }
 
     public function saveDayRate(DayRateDto $rateDto): bool
     {
-        $result = $this->collection->insertOne($rateDto);
-
-        return $result->isAcknowledged();
+        return $this->storage->saveDayRate($rateDto);
     }
 
-    public function getLastThirtyDays(CurrencyPairEnum $pair): array
+    public function getLatestFor(int $days, CurrencyPairEnum $pair): array
     {
-        $fromDate = new UTCDateTime((new DateTime('-30 days'))->getTimestamp() * 1000);
+        $fromDate = new UTCDateTime((new DateTime("-$days days"))->getTimestamp() * 1000);
 
         $filter = [
             'date'      => ['$gte' => $fromDate],
@@ -48,10 +40,10 @@ class MongoUsdRepository extends AbstractMongoRepository
 
         $options = [
             'sort'  => ['date' => -1], // последние сверху (опционально)
-            'limit' => 50, // ограничить количество (опционально)
+            'limit' => 60, // ограничить количество (опционально)
         ];
 
-        $cursor = $this->collection->find($filter, $options);
+        $cursor = $this->storage->find($filter, $options);
 
         return array_map(function ($item) {
             return [
@@ -60,6 +52,19 @@ class MongoUsdRepository extends AbstractMongoRepository
                 'date' => $item['date']->toDateTime()->format('m.d'),
             ];
         }, $cursor->toArray());
+    }
+
+    public function deleteOlderThan(int $days, CurrencyPairEnum $pair, TradeDirectionEnum $direction): bool
+    {
+        $fromDate = new UTCDateTime((new DateTime("-$days days"))->getTimestamp() * 1000);
+
+        $filter = [
+            'date'      => ['$lte' => $fromDate],
+            'pair'      => $pair->value,
+            'direction' => $direction->value,
+        ];
+
+        return $this->storage->deleteMany($filter);
     }
 
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
-use App\Application\Dto\DayRateDto;
 use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Repositories\MongoUsdRepository;
 use MongoException;
@@ -15,28 +14,9 @@ final readonly class MongoDbService
     {
     }
 
-    public function saveUsdRate(DayRateDto $rateDto): true
-    {
-        $result = $this->usdRepository->saveDayRate($rateDto);
-
-        if ($result !== true) {
-            $class = get_class($this->usdRepository);
-            throw new MongoException("Cannot save to $class");
-        }
-
-        return true;
-    }
-
-    public function readCollection(): array
-    {
-        $collection = $this->usdRepository->readCollection();
-
-        return $collection;
-    }
-
     public function getCurrencyPairChartValues(CurrencyPairEnum $pairEnum): array
     {
-        $data = $this->usdRepository->getLastThirtyDays($pairEnum);
+        $data = $this->usdRepository->getLatestFor(30, $pairEnum);
         $grouppedData = $this->groupByDateAverage($data);
 
         $dates = [];
