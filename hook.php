@@ -15,10 +15,10 @@ use Psr\Log\LoggerInterface;
 use Resque\Resque;
 use Resque\Scheduler;
 
-require __DIR__ . '/../vendor/autoload.php';
-$container = require __DIR__ . '/../src/bootstrap/container.php';
+require __DIR__ . '/vendor/autoload.php';
+$container = require __DIR__ . '/src/bootstrap/container.php';
 
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_NOTICE);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
 /** @var LoggerInterface $log */
 $log = ContainerHelper::get(LoggerInterface::class);
@@ -28,10 +28,12 @@ try {
     $queue = getenv('REDIS_QUEUE');
     // подключаем очереди
     ContainerHelper::get(Resque::class);
+
     $chartKey = QuickChartService::CACHE_KEY;
     $chartRubKey = sprintf($chartKey, strtolower(CurrencyPairEnum::USD_RUB->value));
     $chartArsKey = sprintf($chartKey, strtolower(CurrencyPairEnum::USD_ARS->value));
 
+    // обнуление ключей перед запросами
     $keys = [
         CurrencyServiceInterface::DOLLAR_BLUE_SELL,
         CurrencyServiceInterface::DOLLAR_BLUE_BUY,

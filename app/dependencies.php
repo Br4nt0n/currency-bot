@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Clients\BlockchainClient;
 use App\Application\Clients\BlueLyticsClient;
 use App\Application\Clients\ExchangeRateClient;
 use App\Application\Factories\CommandsFactory;
@@ -92,6 +93,14 @@ return function (ContainerBuilder $containerBuilder) {
                 $c->get(LoggerInterface::class),
                 new \GuzzleHttp\Client(),
                 getenv('DOLLAR_BLUE_URI'),
+            );
+        },
+
+        BlockchainClient::class => function (ContainerInterface $c) {
+            return new BlockchainClient(
+                $c->get(LoggerInterface::class),
+                new \GuzzleHttp\Client(),
+                getenv('BLOCKCHAIN_URI'),
             );
         },
 

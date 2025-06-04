@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Factories;
 
 use App\Application\Commands\TelegramCommands\ArsCommand;
+use App\Application\Commands\TelegramCommands\BTCRatesCommand;
 use App\Application\Commands\TelegramCommands\ChartCommand;
 use App\Application\Commands\TelegramCommands\CurrencyChartCommand;
 use App\Application\Commands\TelegramCommands\RubCommand;
@@ -29,6 +30,7 @@ final class CommandsFactory implements CommandsFactoryInterface
             BotCommandEnum::USD_CHOICE->value => new UsdCommand(),
             BotCommandEnum::RUB_CHOICE->value => new RubCommand(),
             BotCommandEnum::ARS_CHOICE->value => new ArsCommand(),
+            BotCommandEnum::BTC->value => new BTCRatesCommand(),
             default => throw new InvalidArgumentException("Undefined $type of command")
         };
     }

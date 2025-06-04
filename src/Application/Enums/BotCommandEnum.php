@@ -26,4 +26,6 @@ enum BotCommandEnum: string
 
     case RUB_CHOICE = 'rub_choice';
 
+    case BTC = 'btc';
+
 }

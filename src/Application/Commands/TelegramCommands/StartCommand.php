@@ -16,7 +16,7 @@ class StartCommand extends Command
     public function handle(): void
     {
         $this->replyWithMessage([
-            'text' => 'Привет! Добро пожаловать в бот конвертации валюты!',
+            'text' => 'Привет! Это бот конвертации валюты!',
         ]);
 
         $replyMarkup = Keyboard::make()
@@ -40,10 +40,16 @@ class StartCommand extends Command
                     'text' => '📈 График курса',
                     'callback_data' => BotCommandEnum::CHART,
                 ]),
+            ])
+            ->row([
+                Keyboard::inlineButton([
+                    'text' => '₿ Курс BTC',
+                    'callback_data' => BotCommandEnum::BTC,
+                ]),
             ]);
 
         $this->replyWithMessage([
-            'text' => 'Доступные валюты: песо (ARS), доллар (USD), рубль (RUB). Опции: ',
+            'text' => 'Доступные валюты:  🇦🇷 песо (ARS), 🇺🇸 доллар (USD), 🇷🇺 рубль (RUB). Опции: ',
             'reply_markup' => $replyMarkup
         ]);
     }

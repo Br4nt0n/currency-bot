@@ -14,7 +14,7 @@ final class QuickChartService
 
     private const int TTL = 43200;
 
-    public function __construct(private Redis $redis, private QuickChart $quickchart)
+    public function __construct(private readonly Redis $redis, private readonly QuickChart $quickchart)
     {
         $this->quickchart->setWidth(700);
         $this->quickchart->setHeight(400);
