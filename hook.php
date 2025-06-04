@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Enums\CacheKeyEnum;
 use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\BlueDollarJob;
@@ -29,9 +30,8 @@ try {
     // подключаем очереди
     ContainerHelper::get(Resque::class);
 
-    $chartKey = QuickChartService::CACHE_KEY;
-    $chartRubKey = sprintf($chartKey, strtolower(CurrencyPairEnum::USD_RUB->value));
-    $chartArsKey = sprintf($chartKey, strtolower(CurrencyPairEnum::USD_ARS->value));
+    $chartRubKey = CacheKeyEnum::GRAPH->format(CurrencyPairEnum::USD_RUB->value);
+    $chartArsKey = CacheKeyEnum::GRAPH->format(CurrencyPairEnum::USD_ARS->value);
 
     // обнуление ключей перед запросами
     $keys = [

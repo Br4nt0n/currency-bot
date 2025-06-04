@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
+use App\Application\Enums\CacheKeyEnum;
 use App\Application\Enums\CurrencyPairEnum;
 use QuickChart;
 use Redis;
 
 final class QuickChartService
 {
-    public const string CACHE_KEY = 'currency_%s_graph';
-
     private const int TTL = 43200;
 
     public function __construct(private readonly Redis $redis, private readonly QuickChart $quickchart)
@@ -30,9 +29,16 @@ final class QuickChartService
             'options' => [
                 'title' => ['display' => true, 'text' => "Курс валют $description за 30 дней"],
                 'plugins' => ['legend' => ['position' => 'bottom']],
+                'scales' => [
+                    'yAxes' => [
+                        'ticks' => [
+                            'callback' => "function(val) { return val'; }"
+                        ]
+                    ]
+                ],
             ]
         ];
-        $cacheKey = sprintf(self::CACHE_KEY, strtolower($pairEnum->value));
+        $cacheKey = CacheKeyEnum::GRAPH->format($pairEnum->value);
 
         if (!$this->redis->exists($cacheKey)) {
             $this->quickchart->setConfig(json_encode($chartConfig));
@@ -56,5 +62,29 @@ final class QuickChartService
                 ],
             ]
         ];
+    }
+
+    public function getChartUrl(array $dates, array $values, CurrencyPairEnum $pairEnum): string
+    {
+        $description = $pairEnum->description();
+        $chartConfig = [
+            'type' => 'line',
+            'data' => $this->makeData($dates, $values, $pairEnum),
+            'options' => [
+                'title' => ['display' => true, 'text' => "Курс валют $description за 30 дней"],
+                'plugins' => ['legend' => ['position' => 'bottom']],
+                'scales' => [
+                    'yAxes' => [
+                        'ticks' => [
+                            'callback' => "function(val) { return val'; }"
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->quickchart->setConfig(json_encode($chartConfig));
+
+        return $this->quickchart->getUrl();
     }
 }

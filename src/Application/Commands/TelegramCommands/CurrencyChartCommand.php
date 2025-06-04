@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Commands\TelegramCommands;
 
 use App\Application\Enums\BotCommandEnum;
+use App\Application\Enums\CacheKeyEnum;
 use App\Application\Handlers\ContainerHelper;
-use App\Application\Services\QuickChartService;
 use Redis;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\FileUpload\InputFile;
@@ -35,7 +35,7 @@ class CurrencyChartCommand extends Command
     {
         /** @var Redis $redis */
         $redis = ContainerHelper::get(Redis::class);
-        $cacheKey = sprintf(QuickChartService::CACHE_KEY, strtolower($callback));
+        $cacheKey = CacheKeyEnum::GRAPH->format($callback);
 
         if ($redis->exists($cacheKey)) {
             $content = $redis->get($cacheKey);

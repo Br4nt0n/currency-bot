@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Services;
 
+use App\Application\Enums\CacheKeyEnum;
 use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Services\QuickChartService;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -36,7 +37,7 @@ class QuickChartServiceTest extends TestCase
         $this->redis->method('exists')->willReturn(false);
         $this->redis->expects(self::once())->method('setex')
             ->with(
-                sprintf(QuickChartService::CACHE_KEY, strtolower(CurrencyPairEnum::USD_RUB->value)),
+                CacheKeyEnum::GRAPH->format(CurrencyPairEnum::USD_RUB->value),
                 43200,
                 base64_encode("111")
             );
@@ -68,6 +69,13 @@ class QuickChartServiceTest extends TestCase
             'options' => [
                 'title' => ['display' => true, 'text' => "Курс валют $description за 30 дней"],
                 'plugins' => ['legend' => ['position' => 'bottom']],
+                'scales' => [
+                    'yAxes' => [
+                        'ticks' => [
+                            'callback' => "function(val) { return val'; }"
+                        ]
+                    ]
+                ],
             ]
         ];
 
