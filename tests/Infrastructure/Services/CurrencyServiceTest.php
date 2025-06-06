@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Application\Services;
+namespace Infrastructure\Services;
 
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
 use App\Application\Exceptions\CurrencyException;
+use App\Application\Services\CurrencyServiceInterface;
 use App\Infrastructure\Repositories\Http\BlueLyticsRepository;
 use App\Infrastructure\Repositories\Http\ExchangeRateRepository;
 use App\Infrastructure\Services\CurrencyService;
-use App\Application\Services\CurrencyServiceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use Redis;

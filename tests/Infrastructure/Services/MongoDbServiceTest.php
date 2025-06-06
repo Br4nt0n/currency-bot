@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Application\Services;
+namespace Infrastructure\Services;
 
-use App\Application\Dto\DayRateDto;
 use App\Application\Enums\CurrencyPairEnum;
-use App\Application\Enums\TradeDirectionEnum;
 use App\Infrastructure\Repositories\Http\MongoUsdCurrencyRepository;
 use App\Infrastructure\Services\MongoDbService;
 use App\Infrastructure\Storage\MongoUsdStorage;
 use DateTime;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Driver\CursorInterface;
-use MongoException;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 

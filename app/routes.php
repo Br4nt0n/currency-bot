@@ -20,8 +20,7 @@ return function (App $app) {
     $app->get('/', function (Request $request, Response $response) {
         $body = '<button><a href="/get-dollar-blue">Get Dollar Blue</a></button>
                 <button><a href="/get-dollar-rates">Get Dollar</a></button>
-                <button><a href="/get-ruble-rates">Get Rubble Rate</a></button>
-                <button><a href="/conversion">Conversion</a></button>';
+                <button><a href="/get-ruble-rates">Get Rubble Rate</a></button>';
         $response->getBody()->write($body);
         return $response;
     });

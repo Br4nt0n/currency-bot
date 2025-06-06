@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
-use App\Application\Dto\ARSRatesDto;
-use App\Application\Dto\RatesBase;
-use App\Application\Dto\RUBRatesDto;
-use App\Application\Dto\USDRatesDto;
+use App\Application\ValueObjects\RatesBase;
 
 interface ConversionInterface
 {
-    public function pesoConversion(float $amount): RatesBase|ARSRatesDto;
+    public function pesoConversion(float $amount): RatesBase;
 
-    public function dollarConversion(float $amount): RatesBase|USDRatesDto;
+    public function dollarConversion(float $amount): RatesBase;
 
-    public function rubleConversion(float $amount): RatesBase|RUBRatesDto;
+    public function rubleConversion(float $amount): RatesBase;
 }

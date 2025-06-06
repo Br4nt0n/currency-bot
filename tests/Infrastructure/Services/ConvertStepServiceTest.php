@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Application\Services;
+namespace Infrastructure\Services;
 
-use App\Application\Dto\ARSRatesDto;
-use App\Application\Dto\RUBRatesDto;
-use App\Application\Dto\USDRatesDto;
 use App\Application\Enums\CurrencyCodeEnum;
 use App\Application\Services\ConversionInterface;
+use App\Application\ValueObjects\ARSRates;
+use App\Application\ValueObjects\RUBRates;
+use App\Application\ValueObjects\USDRates;
 use App\Infrastructure\Services\ConvertStepService;
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -66,7 +66,7 @@ class ConvertStepServiceTest extends TestCase
                 return new Message($message);
             });
 
-        $dto = new USDRatesDto(
+        $dto = new USDRates(
             ars: 2.2,
             ars_blue: 2.3,
             rub: 2.4
@@ -106,7 +106,7 @@ class ConvertStepServiceTest extends TestCase
                 return new Message($message);
             });
 
-        $dto = new RUBRatesDto(
+        $dto = new RUBRates(
             ars: 3.3,
             usd: 3.4
         );
@@ -144,7 +144,7 @@ class ConvertStepServiceTest extends TestCase
                 return new Message($message);
             });
 
-        $dto = new ARSRatesDto(
+        $dto = new ARSRates(
             rub: 1.1,
             usd: 1.2,
             usd_blue: 1.3

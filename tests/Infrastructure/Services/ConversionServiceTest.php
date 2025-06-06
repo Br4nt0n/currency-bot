@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Application\Services;
+namespace Infrastructure\Services;
 
-use App\Application\Dto\ARSRatesDto;
 use App\Application\Dto\RubDto;
-use App\Application\Dto\RUBRatesDto;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
-use App\Application\Dto\USDRatesDto;
-use App\Infrastructure\Services\ConversionService;
 use App\Application\Services\CurrencyServiceInterface;
+use App\Application\ValueObjects\ARSRates;
+use App\Application\ValueObjects\RUBRates;
+use App\Application\ValueObjects\USDRates;
+use App\Infrastructure\Services\ConversionService;
 use PHPUnit\Framework\MockObject\MockObject;
 use Redis;
 use Tests\TestCase;
@@ -51,10 +51,10 @@ class ConversionServiceTest extends TestCase
                 return true;
             });
 
-        /** @var ARSRatesDto $result */
+        /** @var ARSRates $result */
         $result = $this->service->pesoConversion($amount);
 
-        $this->assertInstanceOf(ARSRatesDto::class, $result);
+        $this->assertInstanceOf(ARSRates::class, $result);
         $this->assertEquals(round($amount / $rubDto->rubArs, 2), $result->rub);
         $this->assertEquals(round($amount / $usdDto->usdArs, 2), $result->usd);
         $this->assertEquals(round($amount / $usdBlueDto->sell,2), $result->usd_blue);
@@ -83,13 +83,13 @@ class ConversionServiceTest extends TestCase
                 return true;
             });
 
-        /** @var USDRatesDto $result */
+        /** @var USDRates $result */
         $result = $this->service->dollarConversion($amount);
 
-        $this->assertInstanceOf(USDRatesDto::class, $result);
-        $this->assertEquals(round($amount * $usdDto->usdArs, 2), $result->ars);
-        $this->assertEquals(round($amount * $usdBlueDto->buy, 2), $result->ars_blue);
-        $this->assertEquals(round($amount * $usdDto->usdRub,2), $result->rub);
+        $this->assertInstanceOf(USDRates::class, $result);
+        $this->assertEquals(round($amount * $usdDto->usdArs, 2), $result->getArs());
+        $this->assertEquals(round($amount * $usdBlueDto->buy, 2), $result->getArsBlue());
+        $this->assertEquals(round($amount * $usdDto->usdRub,2), $result->getRub());
 
         $this->assertSame([
             [CurrencyServiceInterface::DOLLAR_BLUE_BUY,],
@@ -112,12 +112,12 @@ class ConversionServiceTest extends TestCase
                 return true;
             });
 
-        /** @var RUBRatesDto $result */
+        /** @var RUBRates $result */
         $result = $this->service->rubleConversion($amount);
 
-        $this->assertInstanceOf(RUBRatesDto::class, $result);
-        $this->assertEquals(round($amount * $rubDto->rubArs, 2), $result->ars);
-        $this->assertEquals(round($amount * $rubDto->rubUsd,2), $result->usd);
+        $this->assertInstanceOf(RUBRates::class, $result);
+        $this->assertEquals(round($amount * $rubDto->rubArs, 2), $result->getArs());
+        $this->assertEquals(round($amount * $rubDto->rubUsd,2), $result->getUsd());
 
         $this->assertSame([
             [CurrencyServiceInterface::RUB_ARS,],

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Services;
 
-use App\Application\Dto\RatesBase;
+use App\Application\ValueObjects\RatesBase;
 use App\Application\Enums\CurrencyCodeEnum;
 use App\Application\Services\ConversionInterface;
 use InvalidArgumentException;

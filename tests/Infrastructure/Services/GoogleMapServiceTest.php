@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Application\Services;
+namespace Infrastructure\Services;
 
 use App\Application\Dto\GoogleSpotDto;
 use App\Application\Exceptions\GoogleMapException;
 use App\Infrastructure\Services\GoogleMapService;
+use Fig\Http\Message\StatusCodeInterface;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -61,7 +62,7 @@ class GoogleMapServiceTest extends TestCase
         ];
 
         $stream = $this->getMockBuilder(StreamInterface::class)->getMock();
-        $this->response->expects(self::once())->method('getStatusCode')->willReturn(200);
+        $this->response->expects(self::once())->method('getStatusCode')->willReturn(StatusCodeInterface::STATUS_OK);
         $this->response->expects(self::once())->method('getBody')->willReturn($stream);
         $stream->expects(self::once())->method('getContents')->willReturn(json_encode($map));
 
@@ -87,7 +88,7 @@ class GoogleMapServiceTest extends TestCase
 
     public function testFindExchangeSpotClientFail(): void
     {
-        $this->response->expects(self::exactly(2))->method('getStatusCode')->willReturn(500);
+        $this->response->expects(self::exactly(2))->method('getStatusCode')->willReturn(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR);
         $this->response->expects(self::once())->method('getReasonPhrase')->willReturn('because');
         $this->expectException(GoogleMapException::class);
         $this->expectExceptionMessage('because');
@@ -98,7 +99,7 @@ class GoogleMapServiceTest extends TestCase
     public function testFindExchangeSpotEmptyResponse(): void
     {
         $stream = $this->getMockBuilder(StreamInterface::class)->getMock();
-        $this->response->expects(self::once())->method('getStatusCode')->willReturn(200);
+        $this->response->expects(self::once())->method('getStatusCode')->willReturn(StatusCodeInterface::STATUS_OK);
         $this->response->expects(self::once())->method('getBody')->willReturn($stream);
         $stream->expects(self::once())->method('getContents')->willReturn(json_encode(['results' => []]));
 
