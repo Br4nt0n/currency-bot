@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Clients;
+namespace App\Infrastructure\Api\HttpClient;
 
+use App\Application\Clients\BaseClient;
 use GuzzleHttp\Client;
 use HttpException;
 use Psr\Log\LoggerInterface;

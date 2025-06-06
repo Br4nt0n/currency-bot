@@ -10,7 +10,7 @@ use App\Application\Dto\RUBRatesDto;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
 use App\Application\Dto\USDRatesDto;
-use App\Application\Services\ConversionService;
+use App\Infrastructure\Services\ConversionService;
 use App\Application\Services\CurrencyServiceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Redis;

@@ -7,9 +7,9 @@ namespace Application\Services;
 use App\Application\Dto\DayRateDto;
 use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Enums\TradeDirectionEnum;
-use App\Application\Repositories\MongoUsdRepository;
-use App\Application\Services\MongoDbService;
-use App\Application\Storages\MongoUsdStorage;
+use App\Infrastructure\Repositories\Http\MongoUsdCurrencyRepository;
+use App\Infrastructure\Services\MongoDbService;
+use App\Infrastructure\Storage\MongoUsdStorage;
 use DateTime;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Driver\CursorInterface;
@@ -27,7 +27,7 @@ class MongoDbServiceTest extends TestCase
         parent::setUp();
 
         $this->storage = $this->getMockBuilder(MongoUsdStorage::class)->disableOriginalConstructor()->getMock();
-        $repository = new MongoUsdRepository($this->storage);
+        $repository = new MongoUsdCurrencyRepository($this->storage);
         $this->service = new MongoDbService($repository);
     }
 

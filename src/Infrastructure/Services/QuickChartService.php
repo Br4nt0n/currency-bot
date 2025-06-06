@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Services;
+namespace App\Infrastructure\Services;
 
 use App\Application\Enums\CacheKeyEnum;
 use App\Application\Enums\CurrencyPairEnum;

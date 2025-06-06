@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Services;
+namespace App\Infrastructure\Services;
 
 use App\Application\Dto\RatesBase;
 use App\Application\Enums\CurrencyCodeEnum;
+use App\Application\Services\ConversionInterface;
 use InvalidArgumentException;
 use Redis;
 use Telegram\Bot\Api;

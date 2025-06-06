@@ -6,7 +6,7 @@ namespace App\Application\Commands\TelegramCommands;
 
 use App\Application\Enums\BotCommandEnum;
 use App\Application\Handlers\ContainerHelper;
-use App\Application\Services\GoogleMapService;
+use App\Infrastructure\Services\GoogleMapService;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\Objects\Location;
 

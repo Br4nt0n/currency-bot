@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Repositories;
+namespace App\Infrastructure\Repositories\Http;
 
-use App\Application\Clients\ExchangeRateClient;
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdDto;
+use App\Infrastructure\Api\HttpClient\ExchangeRateClient;
 
 class ExchangeRateRepository
 {

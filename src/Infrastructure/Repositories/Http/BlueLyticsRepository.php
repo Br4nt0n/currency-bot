@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Repositories;
+namespace App\Infrastructure\Repositories\Http;
 
-use App\Application\Clients\BlueLyticsClient;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdOfficialDto;
+use App\Infrastructure\Api\HttpClient\BlueLyticsClient;
 
 class BlueLyticsRepository
 {

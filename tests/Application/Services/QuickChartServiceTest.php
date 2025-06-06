@@ -6,7 +6,7 @@ namespace Application\Services;
 
 use App\Application\Enums\CacheKeyEnum;
 use App\Application\Enums\CurrencyPairEnum;
-use App\Application\Services\QuickChartService;
+use App\Infrastructure\Services\QuickChartService;
 use PHPUnit\Framework\MockObject\MockObject;
 use QuickChart;
 use Redis;

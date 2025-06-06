@@ -11,7 +11,7 @@ use App\Application\Commands\TelegramCommands\LatestRatesCommand;
 use App\Application\Commands\TelegramCommands\StartCommand;
 use App\Application\Enums\BotCommandEnum;
 use App\Application\Factories\CommandsFactoryInterface;
-use App\Application\Services\ConvertStepService;
+use App\Infrastructure\Services\ConvertStepService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Telegram\Bot\Api;

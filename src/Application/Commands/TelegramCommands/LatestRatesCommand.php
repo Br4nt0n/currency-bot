@@ -7,7 +7,7 @@ namespace App\Application\Commands\TelegramCommands;
 use App\Application\Enums\BotCommandEnum;
 use App\Application\Exceptions\CurrencyException;
 use App\Application\Handlers\ContainerHelper;
-use App\Application\Services\CurrencyService;
+use App\Infrastructure\Services\CurrencyService;
 use App\Application\Services\CurrencyServiceInterface;
 use Redis;
 use Telegram\Bot\Commands\Command;

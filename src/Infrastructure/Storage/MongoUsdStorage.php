@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Storages;
+namespace App\Infrastructure\Storage;
 
 use App\Application\Dto\DayRateDto;
+use App\Application\Storages\MongoStorageInterface;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\CursorInterface;

@@ -9,7 +9,7 @@ use App\Application\Commands\TelegramCommands\StartCommand;
 use App\Application\Factories\CommandsFactory;
 use App\Application\Factories\CommandsFactoryInterface;
 use App\Application\Services\ConversionInterface;
-use App\Application\Services\ConvertStepService;
+use App\Infrastructure\Services\ConvertStepService;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Slim\Psr7\Response;

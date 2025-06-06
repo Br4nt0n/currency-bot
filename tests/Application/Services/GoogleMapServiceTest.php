@@ -6,7 +6,7 @@ namespace Application\Services;
 
 use App\Application\Dto\GoogleSpotDto;
 use App\Application\Exceptions\GoogleMapException;
-use App\Application\Services\GoogleMapService;
+use App\Infrastructure\Services\GoogleMapService;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\MockObject\MockObject;

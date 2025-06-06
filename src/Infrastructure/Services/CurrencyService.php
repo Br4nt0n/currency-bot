@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Services;
+namespace App\Infrastructure\Services;
 
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
 use App\Application\Dto\UsdOfficialDto;
 use App\Application\Exceptions\CurrencyException;
-use App\Application\Repositories\BlueLyticsRepository;
-use App\Application\Repositories\ExchangeRateRepository;
+use App\Infrastructure\Repositories\Http\BlueLyticsRepository;
+use App\Infrastructure\Repositories\Http\ExchangeRateRepository;
+use App\Application\Services\CurrencyServiceInterface;
 use Redis;
 
 final class CurrencyService implements CurrencyServiceInterface

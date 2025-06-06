@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Repositories;
+namespace App\Infrastructure\Repositories\Http;
 
 use App\Application\Dto\DayRateDto;
 use App\Application\Enums\CurrencyPairEnum;
@@ -11,7 +11,7 @@ use App\Application\Storages\MongoStorageInterface;
 use DateTime;
 use MongoDB\BSON\UTCDateTime;
 
-class MongoUsdRepository extends AbstractMongoRepository
+class MongoUsdCurrencyRepository extends AbstractMongoCurrencyRepository
 {
     public function __construct(MongoStorageInterface $storage)
     {

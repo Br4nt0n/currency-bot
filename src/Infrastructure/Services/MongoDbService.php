@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Services;
+namespace App\Infrastructure\Services;
 
 use App\Application\Enums\CurrencyPairEnum;
-use App\Application\Repositories\MongoUsdRepository;
+use App\Infrastructure\Repositories\Http\MongoUsdCurrencyRepository;
 use MongoException;
 
 final readonly class MongoDbService
 {
-    public function __construct(private MongoUsdRepository $usdRepository)
+    public function __construct(private MongoUsdCurrencyRepository $usdRepository)
     {
     }
 

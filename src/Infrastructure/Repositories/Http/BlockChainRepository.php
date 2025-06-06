@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Repositories;
+namespace App\Infrastructure\Repositories\Http;
 
-use App\Application\Clients\BlockchainClient;
 use App\Application\Dto\BtcRubDto;
 use App\Application\Dto\BtcUsdDto;
 use App\Application\Exceptions\BTCException;
+use App\Infrastructure\Api\HttpClient\BlockchainClient;
 use Illuminate\Support\Collection;
 
 readonly class BlockChainRepository

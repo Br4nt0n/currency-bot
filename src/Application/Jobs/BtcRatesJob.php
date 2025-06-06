@@ -9,7 +9,7 @@ use App\Application\Enums\CurrencyCodeEnum;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\Traits\RetryableJobTrait;
 use App\Application\Log\QueueLoggerInterface;
-use App\Application\Repositories\BlockChainRepository;
+use App\Infrastructure\Repositories\Http\BlockChainRepository;
 use Psr\Log\LoggerInterface;
 use Redis;
 use Resque\Job\Job;

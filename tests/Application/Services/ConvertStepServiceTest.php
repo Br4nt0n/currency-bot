@@ -9,7 +9,7 @@ use App\Application\Dto\RUBRatesDto;
 use App\Application\Dto\USDRatesDto;
 use App\Application\Enums\CurrencyCodeEnum;
 use App\Application\Services\ConversionInterface;
-use App\Application\Services\ConvertStepService;
+use App\Infrastructure\Services\ConvertStepService;
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use Redis;

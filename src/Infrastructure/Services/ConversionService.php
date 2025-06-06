@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Services;
+namespace App\Infrastructure\Services;
 
 use App\Application\Dto\ARSRatesDto;
 use App\Application\Dto\RatesBase;
 use App\Application\Dto\RUBRatesDto;
 use App\Application\Dto\USDRatesDto;
+use App\Application\Services\ConversionInterface;
+use App\Application\Services\CurrencyServiceInterface;
 use Redis;
 
-final class ConversionService implements ConversionInterface
+final readonly class ConversionService implements ConversionInterface
 {
-    public function __construct(private readonly Redis $redis, private readonly CurrencyServiceInterface $service)
+    public function __construct(private Redis $redis, private CurrencyServiceInterface $service)
     {
     }
 

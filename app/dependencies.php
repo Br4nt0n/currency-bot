@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-use App\Application\Clients\BlockchainClient;
-use App\Application\Clients\BlueLyticsClient;
-use App\Application\Clients\ExchangeRateClient;
+use App\Infrastructure\Api\HttpClient\BlockchainClient;
+use App\Infrastructure\Api\HttpClient\BlueLyticsClient;
+use App\Infrastructure\Api\HttpClient\ExchangeRateClient;
 use App\Application\Factories\CommandsFactory;
 use App\Application\Factories\CommandsFactoryInterface;
 use App\Application\Log\QueueLoggerInterface;
 use App\Application\Log\RetryLoggerInterface;
-use App\Application\Repositories\BlueLyticsRepository;
-use App\Application\Repositories\ExchangeRateRepository;
-use App\Application\Repositories\MongoUsdRepository;
+use App\Infrastructure\Repositories\Http\BlueLyticsRepository;
+use App\Infrastructure\Repositories\Http\ExchangeRateRepository;
+use App\Infrastructure\Repositories\Http\MongoUsdCurrencyRepository;
 use App\Application\Services\ConversionInterface;
-use App\Application\Services\ConversionService;
-use App\Application\Services\CurrencyService;
+use App\Infrastructure\Services\ConversionService;
+use App\Infrastructure\Services\CurrencyService;
 use App\Application\Services\CurrencyServiceInterface;
-use App\Application\Services\GoogleMapService;
-use App\Application\Services\MongoDbService;
-use App\Application\Services\QuickChartService;
+use App\Infrastructure\Services\GoogleMapService;
+use App\Infrastructure\Services\MongoDbService;
+use App\Infrastructure\Services\QuickChartService;
 use App\Application\Settings\SettingsInterface;
-use App\Application\Storages\MongoUsdStorage;
+use App\Infrastructure\Storage\MongoUsdStorage;
 use DI\ContainerBuilder;
 use MongoDB\Client;
 use MongoDB\Client as MongoDbClient;
@@ -131,14 +131,14 @@ return function (ContainerBuilder $containerBuilder) {
             );
         },
 
-        MongoUsdRepository::class => function (ContainerInterface $c) {
+        MongoUsdCurrencyRepository::class => function (ContainerInterface $c) {
             $client = $c->get(Client::class);
             $storage = new MongoUsdStorage($client);
-            return new MongoUsdRepository($storage);
+            return new MongoUsdCurrencyRepository($storage);
         },
 
         MongoDbService::class => function (ContainerInterface $c) {
-            $repository = $c->get(MongoUsdRepository::class);
+            $repository = $c->get(MongoUsdCurrencyRepository::class);
             return new MongoDbService($repository);
         },
 
