@@ -8,6 +8,8 @@ use App\Application\Commands\TelegramCommands\ArsCommand;
 use App\Application\Commands\TelegramCommands\BTCRatesCommand;
 use App\Application\Commands\TelegramCommands\ChartCommand;
 use App\Application\Commands\TelegramCommands\CurrencyChartCommand;
+use App\Application\Commands\TelegramCommands\ExchangeSpotCommand;
+use App\Application\Commands\TelegramCommands\LocationCommand;
 use App\Application\Commands\TelegramCommands\RubCommand;
 use App\Application\Commands\TelegramCommands\UsdCommand;
 use App\Application\Commands\TelegramCommands\ConvertCommand;
@@ -31,6 +33,8 @@ final class CommandsFactory implements CommandsFactoryInterface
             BotCommandEnum::RUB_CHOICE->value => new RubCommand(),
             BotCommandEnum::ARS_CHOICE->value => new ArsCommand(),
             BotCommandEnum::BTC->value => new BTCRatesCommand(),
+            BotCommandEnum::LOCATION->value => new LocationCommand(),
+            BotCommandEnum::EXCHANGE->value => new ExchangeSpotCommand(),
             default => throw new InvalidArgumentException("Undefined $type of command")
         };
     }

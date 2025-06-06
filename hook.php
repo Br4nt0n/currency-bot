@@ -11,7 +11,6 @@ use App\Application\Jobs\RubRatesJob;
 use App\Application\Jobs\UsdRatesJob;
 use App\Application\Jobs\UsdRateSaveMongoJob;
 use App\Application\Services\CurrencyServiceInterface;
-use App\Application\Services\QuickChartService;
 use Psr\Log\LoggerInterface;
 use Resque\Resque;
 use Resque\Scheduler;

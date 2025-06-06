@@ -9,6 +9,7 @@ use App\Application\Commands\TelegramCommands\ChartCommand;
 use App\Application\Commands\TelegramCommands\ConvertCommand;
 use App\Application\Commands\TelegramCommands\LatestRatesCommand;
 use App\Application\Commands\TelegramCommands\StartCommand;
+use App\Application\Enums\BotCommandEnum;
 use App\Application\Factories\CommandsFactoryInterface;
 use App\Application\Services\ConvertStepService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -54,6 +55,11 @@ class BotWebhook extends Action
                 $command->make($this->telegram, $update, []);
 
                 $this->respondWithData(['OK']);
+            }
+
+            if ($update->getMessage()->has('location')) {
+                $command = $this->factory->create(BotCommandEnum::EXCHANGE->value);
+                $command->make($this->telegram, $update, []);
             }
 
         } catch (Throwable $e) {

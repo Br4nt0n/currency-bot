@@ -28,4 +28,8 @@ enum BotCommandEnum: string
 
     case BTC = 'btc';
 
+    case EXCHANGE = 'exchange';
+
+    case LOCATION = 'location';
+
 }

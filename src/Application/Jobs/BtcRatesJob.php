@@ -21,7 +21,7 @@ class BtcRatesJob extends Job
 
     private LoggerInterface $logger;
 
-    private const int TTL = 15 * 60;
+    private const int TTL = 30 * 60;
 
     public function setUp(): void
     {

@@ -16,6 +16,7 @@ use App\Application\Services\ConversionInterface;
 use App\Application\Services\ConversionService;
 use App\Application\Services\CurrencyService;
 use App\Application\Services\CurrencyServiceInterface;
+use App\Application\Services\GoogleMapService;
 use App\Application\Services\MongoDbService;
 use App\Application\Services\QuickChartService;
 use App\Application\Settings\SettingsInterface;
@@ -171,6 +172,10 @@ return function (ContainerBuilder $containerBuilder) {
 
         CommandsFactoryInterface::class => function () {
             return new CommandsFactory();
+        },
+
+        GoogleMapService::class => function () {
+            return new GoogleMapService(new \GuzzleHttp\Client(), getenv('GOOGLE_MAPS_KEY'));
         },
 
     ]);

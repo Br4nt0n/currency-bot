@@ -32,6 +32,7 @@ class LatestRatesCommand extends Command
         $this->replyWithMessage([
             'text' => $text,
             'reply_markup' => $replyMarkup,
+            'parse_mode' => 'HTML',
         ]);
     }
 
@@ -39,6 +40,7 @@ class LatestRatesCommand extends Command
     {
         /** @var CurrencyServiceInterface $service */
         $service = ContainerHelper::get(CurrencyService::class);
+
         /** @var Redis $redis */
         $redis = ContainerHelper::get(Redis::class);
         $date = date('d.m.Y');
@@ -57,7 +59,7 @@ class LatestRatesCommand extends Command
         $rubArs = $redis->get(CurrencyServiceInterface::RUB_ARS);
 
         if ($usdRub === false || $usdArs === false || $rubArs === false) {
-            throw new CurrencyException('Latest rates currency not set!');
+            throw new CurrencyException('Latest rates currency are not set!');
         }
 
         $usdBlueSell = round((float)$usdBlueSell, 2);
@@ -66,8 +68,8 @@ class LatestRatesCommand extends Command
         $usdArs = round((float)$usdArs, 2);
         $rubArs = round((float)$rubArs, 2);
 
-        return "На $date 
-            $ Доллар составляет: 
+        return "На 🗓️ $date
+             <b>$ Доллар составляет:</b>
                 Блю курс:
                     Продажа: $usdBlueSell
                     Покупка: $usdBlueBuy
@@ -76,7 +78,7 @@ class LatestRatesCommand extends Command
                 Официальный (песо): 
                     Покупка: $usdArs
                     
-            ₽ Рубль составляет: 
+             <b>₽ Рубль составляет:</b> 
                 Официальный (песо): 
                     Покупка: $rubArs
         ";
