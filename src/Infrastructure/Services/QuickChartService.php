@@ -11,7 +11,7 @@ use Redis;
 
 final class QuickChartService
 {
-    private const int TTL = 43200;
+    private const int TTL = 3600 * 24;
 
     public function __construct(private readonly Redis $redis, private readonly QuickChart $quickchart)
     {

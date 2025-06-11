@@ -7,6 +7,7 @@ namespace Infrastructure\Services;
 use App\Application\Enums\CurrencyCodeEnum;
 use App\Application\Services\ConversionInterface;
 use App\Application\ValueObjects\ARSRates;
+use App\Application\ValueObjects\EURRates;
 use App\Application\ValueObjects\RUBRates;
 use App\Application\ValueObjects\USDRates;
 use App\Infrastructure\Services\ConvertStepService;
@@ -71,9 +72,10 @@ class ConvertStepServiceTest extends TestCase
             ars_blue: 2.3,
             rub: 2.4
         );
-        $this->conversionService->method('dollarConversion')->willReturn($dto);
+        $this->conversionService->expects(self::once())->method('dollarConversion')->willReturn($dto);
         $this->conversionService->expects(self::never())->method('pesoConversion');
         $this->conversionService->expects(self::never())->method('rubleConversion');
+        $this->conversionService->expects(self::never())->method('euroConversion');
 
         $result = $this->service->handle($this->api, $this->update);
 
@@ -110,9 +112,10 @@ class ConvertStepServiceTest extends TestCase
             ars: 3.3,
             usd: 3.4
         );
-        $this->conversionService->method('rubleConversion')->willReturn($dto);
+        $this->conversionService->expects(self::once())->method('rubleConversion')->willReturn($dto);
         $this->conversionService->expects(self::never())->method('pesoConversion');
         $this->conversionService->expects(self::never())->method('dollarConversion');
+        $this->conversionService->expects(self::never())->method('euroConversion');
 
         $result = $this->service->handle($this->api, $this->update);
 
@@ -149,9 +152,49 @@ class ConvertStepServiceTest extends TestCase
             usd: 1.2,
             usd_blue: 1.3
         );
-        $this->conversionService->method('pesoConversion')->willReturn($dto);
+        $this->conversionService->expects(self::once())->method('pesoConversion')->willReturn($dto);
         $this->conversionService->expects(self::never())->method('rubleConversion');
         $this->conversionService->expects(self::never())->method('dollarConversion');
+        $this->conversionService->expects(self::never())->method('euroConversion');
+
+        $result = $this->service->handle($this->api, $this->update);
+
+        $this->assertTrue($result);
+        $this->assertSame([
+            ['chat_id' => $chatId, 'text' =>  "Вы ввели: $amount $currency"],
+            ['chat_id' => $chatId, 'text' =>  $dto->toString()],
+        ], $calls);
+    }
+
+    public function testHandleEurSuccess(): void
+    {
+        $amount = 100;
+        $currency = CurrencyCodeEnum::EUR->value;
+        $messages = collect(['text' => $amount]);
+        $this->update->method('getMessage')->willReturn($messages);
+
+        $chatId = 111;
+        $chat = collect(['id' => $chatId]);
+        $this->update->method('getChat')->willReturn($chat);
+
+        $this->redis->expects(self::once())->method('exists')->willReturn(true);
+        $this->redis->expects(self::once())->method('get')->willReturn($currency);
+        $this->redis->expects(self::once())->method('del');
+
+        $this->api->expects(self::exactly(2))->method('sendMessage')
+            ->willReturnCallback(function ($message) use (&$calls) {
+                $calls[] = $message;
+                return new Message($message);
+            });
+
+        $dto = new EURRates(
+            rub: 4.1,
+            ars: 4.2,
+        );
+        $this->conversionService->method('euroConversion')->willReturn($dto);
+        $this->conversionService->expects(self::never())->method('rubleConversion');
+        $this->conversionService->expects(self::never())->method('dollarConversion');
+        $this->conversionService->expects(self::never())->method('pesoConversion');
 
         $result = $this->service->handle($this->api, $this->update);
 

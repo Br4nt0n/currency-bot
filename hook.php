@@ -6,6 +6,7 @@ use App\Application\Enums\CacheKeyEnum;
 use App\Application\Enums\CurrencyPairEnum;
 use App\Application\Handlers\ContainerHelper;
 use App\Application\Jobs\BlueDollarJob;
+use App\Application\Jobs\EurRatesJob;
 use App\Application\Jobs\QuickChartJob;
 use App\Application\Jobs\RubRatesJob;
 use App\Application\Jobs\UsdRatesJob;
@@ -40,6 +41,8 @@ try {
         CurrencyServiceInterface::USD_ARS,
         CurrencyServiceInterface::RUB_ARS,
         CurrencyServiceInterface::RUB_USD,
+        CurrencyServiceInterface::EUR_ARS,
+        CurrencyServiceInterface::EUR_RUB,
         CurrencyServiceInterface::USD_ARS_SELL,
         CurrencyServiceInterface::USD_ARS_BUY,
         $chartRubKey,
@@ -66,6 +69,12 @@ try {
         'timestamp' => time(),
     ]);
     $log->info('Джоб курс рубля добавлен');
+
+    // курс евро отложен из-за рейтлимита
+    Scheduler::enqueueIn(90, $queue, EurRatesJob::class, [
+        'timestamp' => time(),
+    ]);
+    $log->info('Джоб курс евро добавлен');
 
     // сохранение в монго дб
     Scheduler::enqueueIn(30, $queue, UsdRateSaveMongoJob::class, [

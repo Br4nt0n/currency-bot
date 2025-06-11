@@ -32,6 +32,12 @@ class ConvertCommand extends Command
                     'callback_data' => BotCommandEnum::ARS_CHOICE,
                 ]),
                 Keyboard::inlineButton([
+                    'text' => '🇪🇺 EUR',
+                    'callback_data' => BotCommandEnum::EUR_CHOICE,
+                ]),
+            ])
+            ->row([
+                Keyboard::inlineButton([
                     'text' => 'Назад',
                     'callback_data' => BotCommandEnum::START,
                 ]),

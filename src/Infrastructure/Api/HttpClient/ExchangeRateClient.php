@@ -5,23 +5,26 @@ declare(strict_types=1);
 namespace App\Infrastructure\Api\HttpClient;
 
 use App\Application\Clients\BaseClient;
+use App\Application\Enums\CurrencyCodeEnum;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 
 class ExchangeRateClient extends BaseClient
 {
-    private const string RUB_CODE = 'RUB';
+    private const string RUB = CurrencyCodeEnum::RUB->value;
 
-    private const string DOLLAR_CODE = 'USD';
+    private const string USD = CurrencyCodeEnum::USD->value;
 
-    private const string PESO_CODE = 'ARS';
+    private const string ARS = CurrencyCodeEnum::ARS->value;
+
+    private const string EUR = CurrencyCodeEnum::EUR->value;
 
     private string $path;
 
     private const string LIVE_URI = '/live?access_key=%s&source=%s&currencies=%s';
 
     public function __construct(
-        private LoggerInterface $logger,
+        private readonly LoggerInterface $logger,
         private readonly Client $client,
         private readonly string $url,
         private readonly string $apiKey
@@ -33,14 +36,21 @@ class ExchangeRateClient extends BaseClient
 
     public function getLiveUsdRate(): array
     {
-        $uri = sprintf($this->path,$this->apiKey, self::DOLLAR_CODE, self::RUB_CODE . ',' . self::PESO_CODE);
+        $uri = sprintf($this->path,$this->apiKey, self::USD, self::RUB . ',' . self::ARS);
 
         return $this->sendRequest($uri);
     }
 
     public function getLiveRubRate(): array
     {
-        $uri = sprintf($this->path,$this->apiKey, self::RUB_CODE, self::DOLLAR_CODE . ',' . self::PESO_CODE);
+        $uri = sprintf($this->path,$this->apiKey, self::RUB, self::USD . ',' . self::ARS);
+
+        return $this->sendRequest($uri);
+    }
+
+    public function getLiveEurRate(): array
+    {
+        $uri = sprintf($this->path,$this->apiKey, self::EUR, self::RUB . ',' . self::ARS);
 
         return $this->sendRequest($uri);
     }

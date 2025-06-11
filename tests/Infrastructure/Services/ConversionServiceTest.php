@@ -69,13 +69,13 @@ class ConversionServiceTest extends TestCase
     public function testDollarConversion(): void
     {
         $amount = 100;
-        $this->redis->method('get')->willReturn(false);
+        $this->redis->method('get')->willReturnOnConsecutiveCalls(false, 3.2, 4.2);
 
         $usdBlueDto = new UsdBlueDto(buy: 4.1, sell: 5.1);
         $this->currencyService->method('getDollarBlueRate')->willReturn($usdBlueDto);
 
         $usdDto = new UsdDto(usdRub: 3.2, usdArs: 4.2);
-        $this->currencyService->method('getUsdRates')->willReturn($usdDto);
+        $this->currencyService->expects(self::never())->method('getUsdRates');
 
         $this->redis->expects($this->exactly(3))->method('get')
             ->willReturnCallback(function ($key) use (&$calls) {
@@ -101,10 +101,10 @@ class ConversionServiceTest extends TestCase
     public function testRubleConversion(): void
     {
         $amount = 1000;
-        $this->redis->method('get')->willReturn(false);
+        $this->redis->method('get')->willReturnOnConsecutiveCalls(2.2, 1.2);
 
         $rubDto = new RubDto(rubUsd: 1.2, rubArs: 2.2);
-        $this->currencyService->method('getRubRates')->willReturn($rubDto);
+        $this->currencyService->expects(self::never())->method('getRubRates');
 
         $this->redis->expects($this->exactly(2))->method('get')
             ->willReturnCallback(function ($key) use (&$calls) {

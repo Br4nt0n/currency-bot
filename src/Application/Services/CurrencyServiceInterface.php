@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
+use App\Application\Dto\EurDto;
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
@@ -26,9 +27,15 @@ interface CurrencyServiceInterface
 
     public const string USD_RUB = 'usd_rub';
 
+    public const string EUR_RUB = 'eur_rub';
+
+    public const string EUR_ARS = 'eur_ars';
+
     public function getDollarBlueRate(): UsdBlueDto;
 
     public function getRubRates(): RubDto;
 
     public function getUsdRates(): UsdDto;
+
+    public function getEurRates(): EurDto;
 }

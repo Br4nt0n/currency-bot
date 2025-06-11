@@ -16,7 +16,7 @@ final class ConvertStepService
 {
     private const string CHAT_ID = 'chat_%s';
 
-    public function __construct(private ConversionInterface $conversion, private Redis $redis)
+    public function __construct(private readonly ConversionInterface $conversion, private readonly Redis $redis)
     {
     }
 
@@ -64,6 +64,7 @@ final class ConvertStepService
             CurrencyCodeEnum::ARS->value => $this->conversion->pesoConversion($amount),
             CurrencyCodeEnum::USD->value => $this->conversion->dollarConversion($amount),
             CurrencyCodeEnum::RUB->value => $this->conversion->rubleConversion($amount),
+            CurrencyCodeEnum::EUR->value => $this->conversion->euroConversion($amount),
             default => throw new InvalidArgumentException("This: $currency does`t exists!")
         };
     }

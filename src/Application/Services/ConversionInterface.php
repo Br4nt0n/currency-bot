@@ -13,4 +13,6 @@ interface ConversionInterface
     public function dollarConversion(float $amount): RatesBase;
 
     public function rubleConversion(float $amount): RatesBase;
+
+    public function euroConversion(float $amount): RatesBase;
 }

@@ -8,6 +8,7 @@ use App\Application\Commands\TelegramCommands\ArsCommand;
 use App\Application\Commands\TelegramCommands\BTCRatesCommand;
 use App\Application\Commands\TelegramCommands\ChartCommand;
 use App\Application\Commands\TelegramCommands\CurrencyChartCommand;
+use App\Application\Commands\TelegramCommands\EurCommand;
 use App\Application\Commands\TelegramCommands\ExchangeSpotCommand;
 use App\Application\Commands\TelegramCommands\LocationCommand;
 use App\Application\Commands\TelegramCommands\RubCommand;
@@ -27,11 +28,13 @@ final class CommandsFactory implements CommandsFactoryInterface
             BotCommandEnum::START->value => new StartCommand(),
             BotCommandEnum::CONVERT->value => new ConvertCommand(),
             BotCommandEnum::CHART->value => new ChartCommand(),
-            BotCommandEnum::USD_RUB->value, BotCommandEnum::USD_ARS->value => new CurrencyChartCommand(),
+            BotCommandEnum::USD_RUB->value,
+            BotCommandEnum::USD_ARS->value => new CurrencyChartCommand(),
             BotCommandEnum::LATEST->value => new LatestRatesCommand(),
             BotCommandEnum::USD_CHOICE->value => new UsdCommand(),
             BotCommandEnum::RUB_CHOICE->value => new RubCommand(),
             BotCommandEnum::ARS_CHOICE->value => new ArsCommand(),
+            BotCommandEnum::EUR_CHOICE->value => new EurCommand(),
             BotCommandEnum::BTC->value => new BTCRatesCommand(),
             BotCommandEnum::LOCATION->value => new LocationCommand(),
             BotCommandEnum::EXCHANGE->value => new ExchangeSpotCommand(),

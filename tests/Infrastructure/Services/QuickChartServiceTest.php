@@ -38,7 +38,7 @@ class QuickChartServiceTest extends TestCase
         $this->redis->expects(self::once())->method('setex')
             ->with(
                 CacheKeyEnum::GRAPH->format(CurrencyPairEnum::USD_RUB->value),
-                43200,
+                3600 * 24,
                 base64_encode("111")
             );
 

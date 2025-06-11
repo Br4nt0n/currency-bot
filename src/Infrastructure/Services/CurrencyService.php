@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Services;
 
+use App\Application\Dto\EurDto;
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdBlueDto;
 use App\Application\Dto\UsdDto;
@@ -16,7 +17,7 @@ use Redis;
 
 final class CurrencyService implements CurrencyServiceInterface
 {
-    private const int TTL = 3600 * 12;
+    private const int TTL = 3600 * 24;
 
     public function __construct(
         private readonly ExchangeRateRepository $exchangeRateRepository,
@@ -63,7 +64,7 @@ final class CurrencyService implements CurrencyServiceInterface
            return $blueDto;
        }
 
-       throw new CurrencyException("Blue values dont exist");
+       throw new CurrencyException("Blue values aren`t exist");
     }
 
     public function getDollarOfficialRate(): UsdOfficialDto
@@ -77,6 +78,20 @@ final class CurrencyService implements CurrencyServiceInterface
            return $officialDto;
        }
 
-       throw new CurrencyException("Official values dont exist");
+       throw new CurrencyException("Official values aren`t exist");
+    }
+
+    public function getEurRates(): EurDto
+    {
+        $eurDto = $this->exchangeRateRepository->getEurRate();
+
+        if ($eurDto->eurArs !== null && $eurDto->eurRub !== null) {
+            $this->redis->set(self::EUR_RUB, $eurDto->eurRub, self::TTL);
+            $this->redis->set(self::EUR_ARS, $eurDto->eurArs, self::TTL);
+
+            return $eurDto;
+        }
+
+        throw new CurrencyException("Euro values aren`t exist");
     }
 }

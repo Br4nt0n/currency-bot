@@ -26,6 +26,8 @@ enum BotCommandEnum: string
 
     case RUB_CHOICE = 'rub_choice';
 
+    case EUR_CHOICE = 'eur_choice';
+
     case BTC = 'btc';
 
     case EXCHANGE = 'exchange';

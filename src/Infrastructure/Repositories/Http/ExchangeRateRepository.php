@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repositories\Http;
 
+use App\Application\Dto\EurDto;
 use App\Application\Dto\RubDto;
 use App\Application\Dto\UsdDto;
 use App\Infrastructure\Api\HttpClient\ExchangeRateClient;
 
-class ExchangeRateRepository
+readonly class ExchangeRateRepository
 {
-    public function __construct(private readonly ExchangeRateClient $client)
+    public function __construct(private ExchangeRateClient $client)
     {
     }
 
@@ -31,6 +32,16 @@ class ExchangeRateRepository
         return new RubDto(
             rubUsd: $result['quotes']['RUBUSD'] ?? null,
             rubArs: $result['quotes']['RUBARS'] ?? null
+        );
+    }
+
+    public function getEurRate(): EurDto
+    {
+        $result =  $this->client->getLiveEurRate();
+
+        return new EurDto(
+            eurRub: $result['quotes']['EURRUB'] ?? null,
+            eurArs: $result['quotes']['EURARS'] ?? null
         );
     }
 }

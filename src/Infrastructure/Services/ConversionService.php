@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Services;
 
+use App\Application\Exceptions\ConversionException;
 use App\Application\ValueObjects\ARSRates;
+use App\Application\ValueObjects\EURRates;
 use App\Application\ValueObjects\RatesBase;
 use App\Application\ValueObjects\RUBRates;
 use App\Application\ValueObjects\USDRates;
@@ -54,9 +56,7 @@ final readonly class ConversionService implements ConversionInterface
         }
 
         if ($usdRub === false || $usdArs === false) {
-            $usdRate = $this->service->getUsdRates();
-            $usdRub = $usdRate->usdRub;
-            $usdArs = $usdRate->usdArs;
+            throw new ConversionException("USD rates not found!");
         }
 
         return new USDRates(
@@ -72,9 +72,7 @@ final readonly class ConversionService implements ConversionInterface
         $rubUsd = $this->redis->get(CurrencyServiceInterface::RUB_USD);
 
         if ($rubArs === false || $rubUsd === false) {
-            $rubRates = $this->service->getRubRates();
-            $rubArs = $rubRates->rubArs;
-            $rubUsd = $rubRates->rubUsd;
+            throw new ConversionException("RUB rates not found!");
         }
 
         return new RUBRates(
@@ -82,4 +80,20 @@ final readonly class ConversionService implements ConversionInterface
             usd: round($amount * $rubUsd, 2),
         );
     }
+
+    public function euroConversion(float $amount): RatesBase
+    {
+        $eurRub = $this->redis->get(CurrencyServiceInterface::EUR_RUB);
+        $eurArs = $this->redis->get(CurrencyServiceInterface::EUR_ARS);
+
+        if ($eurArs === false || $eurRub === false) {
+            throw new ConversionException("EURO rates not found!");
+        }
+
+        return new EURRates(
+            ars: round($amount * $eurArs, 2),
+            rub: round($amount * $eurRub, 2)
+        );
+    }
+
 }
